@@ -3,6 +3,8 @@
 A browser extension (Firefox and Chrome) that shows IMDb, OMDb, TMDB and Rotten Tomatoes ratings on Netflix
 thumbnails, with review summaries, watch history and recommendations.
 
+**Website:** https://manish-404.github.io/StreamRating/
+
 ![StreamRating screenshots: Netflix browse rows, a title page and the settings tab](docs/screenshots/carousel.gif)
 
 <table>
@@ -48,4 +50,4 @@ Built with [WXT](https://wxt.dev), TypeScript, Preact and Dexie.
 
 ## Privacy
 
-Titles you browse are sent to TMDB and OMDb to look up ratings. Nothing else leaves the browser.
+Titles you browse are sent to TMDB and OMDb to look up ratings. Nothing else leaves the browser. Full details are in the [privacy policy](https://manish-404.github.io/StreamRating/privacy.html).

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StreamRating privacy policy</title>
+  <link rel="canonical" href="https://manish-404.github.io/StreamRating/privacy.html">
+  <style>
+    body { font: 16px/1.6 system-ui, sans-serif; max-width: 42rem; margin: 2rem auto; padding: 0 1rem; color: #1a1a1a; background: #fff; }
+    @media (prefers-color-scheme: dark) { body { color: #e8e8e8; background: #141414; } a { color: #8ab4f8; } }
+    h1, h2 { line-height: 1.25; }
+  </style>
+</head>
+<body>
+  <h1>StreamRating privacy policy</h1>
+  <p>Last updated: 12 October 2026</p>
+
+  <p>StreamRating is a browser extension that shows IMDb and Rotten Tomatoes ratings on streaming thumbnails. It has no account system and no server of its own. This page explains what data it handles.</p>
+
+  <h2>What stays on your device</h2>
+  <ul>
+    <li>Your TMDB and OMDb API keys and your settings, kept in the browser's extension storage.</li>
+    <li>A cache of ratings and title details, kept in the browser's IndexedDB so the same title is not looked up twice.</li>
+  </ul>
+  <p>This data is never sent to the developer or to any third party other than as described below. Removing the extension deletes it.</p>
+
+  <h2>What is sent to third parties</h2>
+  <p>To find a rating, the extension reads the titles shown on the streaming page you are viewing and sends the title name (and year, when the page shows it) to:</p>
+  <ul>
+    <li><strong>The Movie Database (TMDB)</strong>, <code>api.themoviedb.org</code>, to identify the title and fetch details and images.</li>
+    <li><strong>OMDb</strong>, <code>www.omdbapi.com</code>, to fetch IMDb and Rotten Tomatoes ratings.</li>
+  </ul>
+  <p>These requests use your own API key, so they are tied to your key under those services' own terms and privacy policies. Because the titles you browse can reveal your viewing interests, Firefox shows this as "browsing activity" data collection.</p>
+
+  <h2>What is not collected</h2>
+  <ul>
+    <li>No analytics, tracking, advertising or telemetry.</li>
+    <li>No personal information, account details, passwords or payment details.</li>
+    <li>No data is sold or shared with advertisers.</li>
+    <li>The extension does not read or send anything from the streaming site except the visible titles needed for lookups.</li>
+  </ul>
+
+  <h2>Changes</h2>
+  <p>If a future version adds anything that moves data off your device, such as optional backup to your own cloud storage, it will be opt-in and this policy will be updated before it ships.</p>
+
+  <h2>Contact</h2>
+  <p>Questions or requests: open an issue at <a href="https://github.com/Manish-404/StreamRating/issues">github.com/Manish-404/StreamRating/issues</a>.</p>
+</body>
+</html>
