@@ -3,7 +3,15 @@
 A browser extension (Firefox and Chrome) that shows IMDb, OMDb, TMDB and Rotten Tomatoes ratings on Netflix
 thumbnails, with review summaries, watch history and recommendations.
 
-![Netflix title page with ratings, episode ratings and a review summary](docs/screenshots/netflix-detail.png)
+![StreamRating screenshots: Netflix browse rows, a title page and the settings tab](docs/screenshots/carousel.gif)
+
+<table>
+  <tr>
+    <td><a href="docs/screenshots/netflix-browse.webp"><img src="docs/screenshots/netflix-browse.webp" alt="Netflix browse rows with rating badges and a hover card"></a></td>
+    <td><a href="docs/screenshots/netflix-detail.png"><img src="docs/screenshots/netflix-detail.png" alt="Netflix title page with ratings and a review summary"></a></td>
+    <td><a href="docs/screenshots/settings.png"><img src="docs/screenshots/settings.png" alt="Settings tab"></a></td>
+  </tr>
+</table>
 
 ## Features
 
