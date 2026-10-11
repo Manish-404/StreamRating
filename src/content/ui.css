@@ -1,0 +1,58 @@
+:host { all: initial; }
+* { box-sizing: border-box; }
+.badge { display: inline-flex; gap: 4px; pointer-events: auto; font: 600 11px/1 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.chip { display: inline-flex; align-items: center; gap: 4px; padding: 4px 6px; border-radius: 4px; background: rgba(12, 12, 14, 0.86); color: #fff; border: 0; border-left: 3px solid #8a8d96; font: inherit; white-space: nowrap; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5); }
+.chip b { font-weight: 700; opacity: 0.8; }
+.chip.good { border-left-color: #46d369; }
+.chip.mid { border-left-color: #f5b81c; }
+.chip.bad { border-left-color: #f0524f; }
+.chip.dim { border-left-color: #8a8d96; color: #d6d8de; }
+.chip.setup { border-left-color: #8f7bff; cursor: pointer; }
+
+.card { position: fixed; width: 340px; max-height: calc(100vh - 16px); overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; padding: 14px; border-radius: 10px; background: #16171b; color: #ececf1; border: 1px solid #34363f; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6); font: 13px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; pointer-events: auto; }
+.card-top { display: flex; gap: 12px; }
+.poster { flex: none; width: 84px; height: 126px; border-radius: 6px; background: #26272d; overflow: hidden; }
+.poster img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.card-head { min-width: 0; flex: 1; }
+h3 { margin: 0 0 2px; font-size: 16px; line-height: 1.25; font-weight: 700; }
+.meta { color: #a3a6b0; font-size: 12px; margin-bottom: 8px; }
+.scores { display: flex; flex-wrap: wrap; gap: 6px 12px; }
+.score { min-width: 48px; border-left: 3px solid #8a8d96; padding-left: 6px; }
+.score.good { border-left-color: #46d369; }
+.score.mid { border-left-color: #f5b81c; }
+.score.bad { border-left-color: #f0524f; }
+.score-value { font-size: 17px; font-weight: 700; line-height: 1.1; }
+.score-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; color: #a3a6b0; }
+.score-sub { font-size: 10px; color: #7e8190; }
+.tagline { margin: 10px 0 0; font-style: italic; color: #c9cbd3; }
+.overview { margin: 8px 0 0; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+.people { margin: 8px 0 0; color: #c9cbd3; }
+.people b { color: #a3a6b0; font-weight: 600; margin-right: 4px; }
+.note { margin: 10px 0 0; padding: 7px 9px; border-radius: 6px; background: #26232f; color: #d9cfff; font-size: 12px; }
+.link { display: inline-block; margin-top: 10px; color: #a99bff; text-decoration: none; font-weight: 600; }
+.link:hover { text-decoration: underline; }
+
+.detail { display: inline-flex; }
+.detail .chip { font-size: 13px; padding: 7px 10px; }
+
+.chip.ep { font-size: 12px; padding: 3px 7px; box-shadow: none; background: rgba(12, 12, 14, 0.7); }
+
+.review { margin: 12px 0 0; padding: 10px 12px; border-radius: 8px; background: #1e2026; border-left: 3px solid #8f7bff; }
+.review-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 10px; font-size: 12px; color: #a3a6b0; }
+.review-head b { color: #ececf1; }
+.review-text { margin: 6px 0 0; font-size: 13px; line-height: 1.5; color: #dcdee6; }
+.review-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 10px; margin-top: 6px; font-size: 11px; color: #7e8190; }
+.review-foot a { color: #a99bff; text-decoration: none; font-weight: 600; }
+.review-note { margin: 10px 0 0; font-size: 12px; color: #7e8190; }
+
+.still { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 6px; margin-bottom: 10px; background: #26272d; }
+
+/* A visible scrollbar for when the content is taller than the screen. */
+.card::-webkit-scrollbar { width: 10px; }
+.card::-webkit-scrollbar-track { background: #1d1e23; border-radius: 0 10px 10px 0; }
+.card::-webkit-scrollbar-thumb { background: #5a5d6a; border-radius: 5px; border: 2px solid #1d1e23; }
+.card::-webkit-scrollbar-thumb:hover { background: #7a7d8a; }
+/* Firefox does not read the webkit rules above. */
+@supports (-moz-appearance: none) {
+  .card { scrollbar-width: thin; scrollbar-color: #5a5d6a #16171b; }
+}
