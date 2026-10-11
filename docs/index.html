@@ -128,6 +128,20 @@
     .shot img { width: 100%; height: auto; }
     .shot figcaption { color: #9a9cab; font-size: 13px; padding: 10px 16px; text-align: left; background: var(--shot-bg); border-top: 1px solid var(--shot-border); }
 
+    /* Carousel */
+    .carousel { position: relative; }
+    .track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; scroll-behavior: smooth; }
+    .track::-webkit-scrollbar { display: none; }
+    .slide { flex: 0 0 100%; margin: 0; scroll-snap-align: start; display: flex; flex-direction: column; }
+    .slide img { width: 100%; height: min(60vw, 560px); object-fit: contain; background: var(--shot-bg); }
+    .car-btn { position: absolute; top: calc(50% - 40px); width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); background: rgba(10,11,14,.7); color: #fff; font-size: 26px; line-height: 1; cursor: pointer; display: grid; place-items: center; }
+    .car-btn:hover { background: var(--accent); color: var(--on-accent); }
+    .car-btn.prev { left: 12px; } .car-btn.next { right: 12px; }
+    .dots { position: absolute; left: 0; right: 0; bottom: 48px; display: flex; gap: 8px; justify-content: center; }
+    .dots button { width: 10px; height: 10px; padding: 0; border-radius: 50%; border: 0; background: rgba(255,255,255,.4); cursor: pointer; }
+    .dots button[aria-selected="true"] { background: var(--accent); width: 24px; border-radius: 6px; }
+    @media (prefers-reduced-motion: reduce) { .track { scroll-behavior: auto; } }
+
     /* Sections */
     .section { padding: 84px 0; }
     .band { background: var(--bg-alt); border-block: 1px solid var(--border); }
@@ -217,10 +231,25 @@
           <a class="btn btn-ghost" href="#install">Install it</a>
         </div>
         <p class="hero-note">A star takes a second and helps other Netflix viewers find it.</p>
-        <figure class="shot">
-          <img src="screenshots/netflix-detail.png" alt="A Netflix title page showing an IMDb 8.6 badge, episode ratings and a hover card with a summary of the latest review" width="1463" height="1276">
-          <figcaption>A title page: the rating next to Play, a badge on every episode, and a hover card with a review summary.</figcaption>
-        </figure>
+        <div class="carousel shot" id="carousel" role="region" aria-roledescription="carousel" aria-label="StreamRating screenshots">
+          <div class="track" id="track" tabindex="0">
+            <figure class="slide" aria-roledescription="slide" aria-label="1 of 3">
+              <img src="screenshots/netflix-browse.webp" alt="Netflix home rows with IMDb and Rotten Tomatoes badges on thumbnails and a hover card for Alice in Borderland with ratings and the latest review" width="1800" height="853">
+              <figcaption>Browse: IMDb and Rotten Tomatoes badges on every thumbnail, and a hover card with ratings and the latest review.</figcaption>
+            </figure>
+            <figure class="slide" aria-roledescription="slide" aria-label="2 of 3">
+              <img src="screenshots/netflix-detail.png" alt="A Netflix title page showing an IMDb 8.6 badge, episode ratings and a hover card with a summary of the latest review" width="1463" height="1276" loading="lazy">
+              <figcaption>A title page: the rating next to Play, a badge on every episode, and a review summary.</figcaption>
+            </figure>
+            <figure class="slide" aria-roledescription="slide" aria-label="3 of 3">
+              <img src="screenshots/settings.png" alt="The StreamRating settings tab with TMDB and OMDb API key fields, each marked as working" width="1000" height="908" loading="lazy">
+              <figcaption>Settings: paste your free TMDB and OMDb keys and test them.</figcaption>
+            </figure>
+          </div>
+          <button class="car-btn prev" type="button" aria-label="Previous screenshot">‹</button>
+          <button class="car-btn next" type="button" aria-label="Next screenshot">›</button>
+          <div class="dots" id="dots" role="tablist" aria-label="Choose a screenshot"></div>
+        </div>
       </div>
     </section>
 
@@ -343,6 +372,37 @@ npm run build:firefox    # Firefox</pre></li>
         root.dataset.theme = next;
         try { localStorage.setItem('streamrating-theme', next); } catch (e) {}
       });
+      /* Screenshot carousel: arrows, dots, keyboard, and autoplay that stops on any interaction */
+      var track = document.getElementById('track'), dots = document.getElementById('dots');
+      var slides = track.children, n = slides.length, cur = 0, timer = null;
+      function go(i) {
+        cur = (i + n) % n;
+        track.scrollTo({ left: slides[cur].offsetLeft - track.offsetLeft });
+      }
+      function sync() {
+        cur = Math.round(track.scrollLeft / track.clientWidth);
+        Array.prototype.forEach.call(dots.children, function (d, k) { d.setAttribute('aria-selected', k === cur); });
+      }
+      function stop() { if (timer) { clearInterval(timer); timer = null; } }
+      for (var i = 0; i < n; i++) {
+        (function (k) {
+          var b = document.createElement('button');
+          b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-label', 'Screenshot ' + (k + 1));
+          b.addEventListener('click', function () { stop(); go(k); });
+          dots.appendChild(b);
+        })(i);
+      }
+      document.querySelector('.car-btn.prev').addEventListener('click', function () { stop(); go(cur - 1); });
+      document.querySelector('.car-btn.next').addEventListener('click', function () { stop(); go(cur + 1); });
+      track.addEventListener('scroll', sync, { passive: true });
+      track.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight') { e.preventDefault(); stop(); go(cur + 1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); stop(); go(cur - 1); }
+      });
+      ['pointerdown', 'focusin', 'mouseenter'].forEach(function (ev) { document.getElementById('carousel').addEventListener(ev, stop); });
+      sync();
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) timer = setInterval(function () { go(cur + 1); }, 5000);
+
       /* Show the live star count when GitHub answers; otherwise leave it blank */
       fetch('https://api.github.com/repos/Manish-404/StreamRating')
         .then(function (r) { return r.ok ? r.json() : null; })
