@@ -1,0 +1,10 @@
+node_modules/
+.output/
+.wxt/
+dist/
+*.log
+.env
+.env.*
+
+# Local scratch (npm cache/temp redirected here because C: is full)
+.tmp/
