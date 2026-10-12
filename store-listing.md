@@ -5,10 +5,10 @@ characters) and, on addons.mozilla.org, the summary and tags. Keep the descripti
 that have an adapter in `src/sites/`.
 
 ## Summary / description (in use)
-IMDb, OMDb, TMDB and Rotten Tomatoes video ratings on Netflix thumbnails, with review summaries, watch history and recommendations.
+IMDb, OMDb, TMDB and Rotten Tomatoes video ratings on Netflix and YouTube, with review summaries, watch history and recommendations.
 
 ## AMO tags / search keywords
-rating, ratings, imdb rating, omdb rating, tmdb rating, rotten tomatoes, video rating, imdb, netflix
+rating, ratings, imdb rating, omdb rating, tmdb rating, rotten tomatoes, video rating, imdb, netflix, youtube, youtube movies
 
 ## Add to the description and tags once the site adapter ships
-hotstar, prime video, youtube, zee5, sony liv
+hotstar, prime video, zee5, sony liv

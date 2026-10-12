@@ -3,8 +3,8 @@ import preact from '@preact/preset-vite';
 
 export default defineConfig({
   srcDir: 'src',
-  // The sources zip goes to Mozilla for review: keep private notes and scratch files out of it.
-  zip: { excludeSources: ['c*-notes/**', '.tmp/**', '.output/**', '.env*'] },
+  // The sources zip goes to Mozilla for review: keep private notes, scratch files and the website (docs/) out of it.
+  zip: { excludeSources: ['c*-notes/**', '.tmp/**', '.output/**', '.env*', 'docs/**'] },
   vite: () => ({
     plugins: [preact()],
     define: { __BUILD_TIME__: JSON.stringify(new Date().toISOString()) },
@@ -12,7 +12,7 @@ export default defineConfig({
   manifest: ({ browser }) => ({
     name: 'StreamRating',
     description:
-      'IMDb, OMDb, TMDB and Rotten Tomatoes video ratings on Netflix thumbnails, with review summaries, watch history and recommendations.',
+      'IMDb, OMDb, TMDB and Rotten Tomatoes video ratings on Netflix and YouTube, with review summaries, watch history and recommendations.',
     permissions: [
       'storage',
       'unlimitedStorage',

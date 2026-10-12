@@ -1,7 +1,7 @@
 # StreamRating
 
-A browser extension (Firefox and Chrome) that shows IMDb, OMDb, TMDB and Rotten Tomatoes ratings on Netflix
-thumbnails, with review summaries, watch history and recommendations.
+A browser extension (Firefox and Chrome) that shows IMDb, OMDb, TMDB and Rotten Tomatoes ratings on Netflix and
+YouTube thumbnails, with review summaries, watch history and recommendations.
 
 **Website:** https://manish-404.github.io/StreamRating/
 
@@ -18,6 +18,9 @@ thumbnails, with review summaries, watch history and recommendations.
 ## Features
 
 - Ratings badges on Netflix thumbnails, title pages and individual episodes.
+- Ratings on YouTube for films sold on YouTube Movies & TV, and for videos whose title names a film and says
+  "Movie", "Film", "Trailer" or "Teaser" (for example "Pushpa 2 Full Movie Hindi Dubbed" or "Dune: Part Two |
+  Official Trailer"). Also under the title on the watch page. Other videos get no badge.
 - Hover card with the ratings, synopsis and a summary of the latest review.
 - Watch history, watchlist and a "For You" recommendations tab.
 - Your API keys stay in your browser and are never saved to Drive or the backup folder.
