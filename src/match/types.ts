@@ -10,6 +10,14 @@ export interface MatchQuery {
   platform?: Platform;
   /** The site's own id for the title, so a user correction sticks to it. */
   platformId?: string;
+  /** Other readings of the name, tried after `title` (a YouTube upload title can be read more than one way). */
+  alternatives?: string[];
+  /** Say "not found" below this match confidence instead of guessing (names read out of free text). */
+  minConfidence?: number;
+  /** Cast or crew named in the title. Picks between same-named films, and finds a re-titled dub when the name finds nothing. */
+  people?: string[];
+  /** The year is when a video was uploaded, which for a dub is later than the film's release. A film made before it still fits. */
+  yearIsUpload?: boolean;
 }
 
 export type RatingsStatus = 'ok' | 'missing_key' | 'quota' | 'unavailable' | 'no_imdb_id';

@@ -69,6 +69,23 @@ export interface TmdbEpisode {
   still_path: string | null;
 }
 
+export interface TmdbPersonHit {
+  id: number;
+  name: string;
+  popularity: number;
+}
+
+export interface TmdbCredit {
+  id: number;
+  media_type: MediaType;
+  title?: string;
+  name?: string;
+  release_date?: string;
+  first_air_date?: string;
+  popularity: number;
+  vote_count: number;
+}
+
 export interface TmdbFindResult {
   movie_results: TmdbSearchHit[];
   tv_results: TmdbSearchHit[];
@@ -139,6 +156,18 @@ export class TmdbClient {
       include_adult: 'false',
     });
     return data.results.filter((r) => r.media_type === 'movie' || r.media_type === 'tv');
+  }
+
+  /** People matching a name, most popular first. */
+  async searchPerson(query: string): Promise<TmdbPersonHit[]> {
+    const data = await this.request<{ results: TmdbPersonHit[] }>('/search/person', { query, include_adult: 'false' });
+    return data.results;
+  }
+
+  /** Every film and series a person acted in. */
+  async getPersonCredits(personId: number): Promise<TmdbCredit[]> {
+    const data = await this.request<{ cast: TmdbCredit[] }>('/person/' + personId + '/combined_credits');
+    return data.cast.filter((c) => c.media_type === 'movie' || c.media_type === 'tv');
   }
 
   /** Exact lookup from an IMDb id (Stremio links carry one). */
