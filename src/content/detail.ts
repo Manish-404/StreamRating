@@ -29,7 +29,8 @@ export function createDetail(adapter: SiteAdapter) {
   function ensureHost(): HTMLElement {
     if (host) return host;
     host = document.createElement('streamrating-detail');
-    host.style.cssText = 'all: initial; display: inline-flex; align-items: center; margin-left: 14px; vertical-align: middle;';
+    host.style.cssText =
+      'all: initial; ' + (adapter.detail?.hostStyle ?? 'display: inline-flex; align-items: center; margin-left: 14px; vertical-align: middle;');
     const shadow = host.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
     style.textContent = css;
@@ -46,7 +47,7 @@ export function createDetail(adapter: SiteAdapter) {
         result.status === 'ok'
           ? { status: 'ready', info: result.info }
           : result.status === 'not_found'
-            ? { status: 'none' }
+            ? { status: query.minConfidence !== undefined ? 'unlisted' : 'none' }
             : { status: 'error', kind: result.kind, message: result.message };
     } catch {
       next = { status: 'none' };

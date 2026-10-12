@@ -39,6 +39,15 @@ export function Chips({ info }: { info: TitleInfo }) {
 
 export function Badge({ state, onEnter, onLeave, onSetup }: BadgeProps) {
   if (state.status === 'none') return null;
+  if (state.status === 'unlisted') {
+    return (
+      <span class="badge">
+        <span class="chip dim" title="Not found on TMDB or IMDb. This may be a dub sold under a new name, a compilation, or not a film.">
+          No listing
+        </span>
+      </span>
+    );
+  }
   if (state.status === 'loading') return <span class="badge"><span class="chip dim">...</span></span>;
 
   if (state.status === 'error') {

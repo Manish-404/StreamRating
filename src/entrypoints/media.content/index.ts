@@ -8,7 +8,7 @@ import { adapterFor } from '../../sites';
 
 export default defineContentScript({
   // Add a site here together with its adapter in src/sites. Torrent domains are registered at runtime instead.
-  matches: ['*://*.netflix.com/*'],
+  matches: ['*://*.netflix.com/*', '*://www.youtube.com/*'],
   runAt: 'document_idle',
 
   async main() {
@@ -30,9 +30,11 @@ export default defineContentScript({
       const cards = all.filter(isRenderable);
       const found = cards.length;
       if (found > 0) {
-        console.info('[StreamRating] ' + adapter.id + ': recognised ' + found + ' visible thumbnails (' + all.length + ' in the page) on ' + location.pathname);
+        // On YouTube most videos are not about a film and rightly get no badge, so count the ones that are.
+        const titled = cards.filter((c) => adapter.extract(c));
+        console.info('[StreamRating] ' + adapter.id + ': recognised ' + found + ' visible thumbnails (' + all.length + ' in the page, ' + titled.length + ' of the visible ones name a title) on ' + location.pathname);
         // What the adapter read from the first few, so a silent miss can be diagnosed from one pasted line.
-        const sample = cards.slice(0, 3).map((c, i) => {
+        const sample = (titled.length ? titled : cards).slice(0, 3).map((c, i) => {
           const query = adapter.extract(c);
           return { title: query?.title ?? null, badge: !!c.querySelector('streamrating-badge'), html: query ? undefined : c.outerHTML.slice(0, 900), debug: i === 0 ? describeBadge(c) : undefined };
         });

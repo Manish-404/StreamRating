@@ -25,12 +25,16 @@ export interface SiteAdapter {
   extract(card: HTMLElement): MatchQuery | null;
   /** The element to put the badge in. */
   anchor(card: HTMLElement): HTMLElement;
+  /** The element whose hover opens the card, and that the card sits beside. The whole thumbnail card when absent. */
+  hoverTarget?(card: HTMLElement): HTMLElement;
   /**
    * The screen a site opens for one title (Netflix's more-info modal). Returns the title and an element to put
    * the ratings next to, or null when no such screen is open. Must return null on video player pages.
    */
   detail?: {
     find(doc: Document, known: Map<string, MatchQuery>): { query: MatchQuery; anchor: HTMLElement } | null;
+    /** CSS for the element holding the chips; by default it sits inline, after the anchor's other contents. */
+    hostStyle?: string;
   };
   /** The episode list inside a detail screen: which season, and each row with its episode number. */
   episodes?: {

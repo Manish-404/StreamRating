@@ -21,6 +21,7 @@ interface Entry {
 /** Puts a rating badge on thumbnails and keeps it right while the site recycles its elements. */
 export function createBadges(adapter: SiteAdapter) {
   const entries = new WeakMap<HTMLElement, Entry>();
+  const hoverTarget = (card: HTMLElement) => adapter.hoverTarget?.(card) ?? card;
 
   const keyFor = (card: HTMLElement) => {
     const query = adapter.extract(card);
@@ -31,7 +32,7 @@ export function createBadges(adapter: SiteAdapter) {
     render(
       h(Badge, {
         state: e.state,
-        onEnter: (_el: HTMLElement, info: TitleInfo, at) => scheduleOpen(e.card, info, at),
+        onEnter: (_el: HTMLElement, info: TitleInfo, at) => scheduleOpen(hoverTarget(e.card), info, at),
         onLeave: scheduleClose,
         onSetup: () => void sendMessage('openSettings').catch(() => {}),
       }),
@@ -64,7 +65,7 @@ export function createBadges(adapter: SiteAdapter) {
         result.status === 'ok'
           ? { status: 'ready', info: result.info }
           : result.status === 'not_found'
-            ? { status: 'none' }
+            ? { status: query.minConfidence !== undefined ? 'unlisted' : 'none' }
             : { status: 'error', kind: result.kind, message: result.message };
     } catch {
       next = { status: 'none' }; // the extension was reloaded under this page
@@ -79,13 +80,14 @@ export function createBadges(adapter: SiteAdapter) {
 
   /** Hovering the thumbnail itself opens the card, whatever the site shows on top of it afterwards. */
   function watchHover(card: HTMLElement): void {
-    if (hoverWatched.has(card)) return;
-    hoverWatched.add(card);
-    card.addEventListener('mouseenter', (e) => {
+    const target = hoverTarget(card);
+    if (hoverWatched.has(target)) return;
+    hoverWatched.add(target);
+    target.addEventListener('mouseenter', (e) => {
       const state = entries.get(card)?.state;
-      if (state?.status === 'ready') scheduleOpen(card, state.info, { x: e.clientX, y: e.clientY });
+      if (state?.status === 'ready') scheduleOpen(target, state.info, { x: e.clientX, y: e.clientY });
     });
-    card.addEventListener('mouseleave', scheduleClose);
+    target.addEventListener('mouseleave', scheduleClose);
   }
 
   /** Safe to call as often as you like: it does nothing when the card already shows the right badge. */
@@ -101,6 +103,7 @@ export function createBadges(adapter: SiteAdapter) {
     if (found.query.platformId) knownTitles.set(found.query.platformId, found.query);
     const anchor = adapter.anchor(card);
     if (existing && existing.key === found.key) {
+      watchHover(card); // the site may have swapped the thumbnail inside a card it kept
       if (existing.host.parentElement !== anchor) {
         existing.anchor = anchor;
         attach(existing);
