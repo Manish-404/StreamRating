@@ -234,15 +234,19 @@
         <p class="hero-note">A star takes a second and helps other viewers find it.</p>
         <div class="carousel shot" id="carousel" role="region" aria-roledescription="carousel" aria-label="StreamRating screenshots">
           <div class="track" id="track" tabindex="0">
-            <figure class="slide" aria-roledescription="slide" aria-label="1 of 3">
+            <figure class="slide" aria-roledescription="slide" aria-label="1 of 4">
               <img src="screenshots/netflix-browse.webp" alt="Netflix home rows with IMDb and Rotten Tomatoes badges on thumbnails and a hover card for Alice in Borderland with ratings and the latest review" width="1800" height="853">
               <figcaption>Browse: IMDb and Rotten Tomatoes badges on every thumbnail, and a hover card with ratings and the latest review.</figcaption>
             </figure>
-            <figure class="slide" aria-roledescription="slide" aria-label="2 of 3">
+            <figure class="slide" aria-roledescription="slide" aria-label="2 of 4">
+              <img src="screenshots/content-advisory.webp" alt="The StreamRating hover card for Ted on a Netflix title page, with IMDb, Rotten Tomatoes, Metacritic and TMDB scores, a content advisory box scoring Sex/Nudity, Violence/Gore and Language from Kids-In-Mind and IMDb, and the latest review" width="2686" height="1535" loading="lazy">
+              <figcaption>The hover card on a title page: ratings, a content advisory from Kids-In-Mind and IMDb, and the latest review.</figcaption>
+            </figure>
+            <figure class="slide" aria-roledescription="slide" aria-label="3 of 4">
               <img src="screenshots/netflix-detail.png" alt="A Netflix title page showing an IMDb 8.6 badge, episode ratings and a hover card with a summary of the latest review" width="1463" height="1276" loading="lazy">
               <figcaption>A title page: the rating next to Play, a badge on every episode, and a review summary.</figcaption>
             </figure>
-            <figure class="slide" aria-roledescription="slide" aria-label="3 of 3">
+            <figure class="slide" aria-roledescription="slide" aria-label="4 of 4">
               <img src="screenshots/settings.png" alt="The StreamRating settings tab with TMDB and OMDb API key fields, each marked as working" width="1000" height="908" loading="lazy">
               <figcaption>Settings: paste your free TMDB and OMDb keys and test them.</figcaption>
             </figure>
@@ -266,6 +270,28 @@
           <div class="card"><div class="ico" aria-hidden="true">!</div><h3>Content advisory</h3><p>Sex/nudity, violence/gore and language out of 10, from Kids-In-Mind and IMDb's Parents Guide, in the hover card.</p></div>
           <div class="card"><div class="ico" aria-hidden="true">↺</div><h3>Watch history</h3><p>Keeps a history and a watchlist of what you have seen and what you want to see.</p></div>
           <div class="card"><div class="ico" aria-hidden="true">✦</div><h3>For You</h3><p>Recommendations based on the ratings of the things you have watched.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="advisory" aria-labelledby="advisory-title">
+      <div class="wrap">
+        <p class="kicker">Content advisory</p>
+        <h2 id="advisory-title">Know what's in it before you press play</h2>
+        <p class="sub">Open a hover card and StreamRating scores the title for sex and nudity, violence and gore, and language, each from 0 (none) to 10 (extreme), using two independent sources.</p>
+        <div class="two" style="margin-top:0">
+          <div>
+            <ul class="ticks">
+              <li><b>Kids-In-Mind</b> (<code>kids-in-mind.com</code>) gives its own 0 to 10 score for each of the three categories, written by its reviewers for films it has covered. It is the more precise of the two.</li>
+              <li><b>IMDb Parents Guide</b> rates each category None, Mild, Moderate or Severe. StreamRating shows these as 0, 3, 6 or 9, marked with <b>≈</b> because they are rougher than Kids-In-Mind's numbers.</li>
+              <li>Colours run green (3 or less), amber (4 to 6) and red (7 or more), so a glance is enough. Hover an IMDb score to see how it was converted.</li>
+              <li>If only one source has the title you see just that one. A title neither has shows "No content advisory found".</li>
+            </ul>
+            <p class="sub" style="margin:18px 0 0">Example, <i>Ted</i> (2012): Kids-In-Mind gives Sex/Nudity 8, Violence/Gore 5 and Language 10, while IMDb's Parents Guide comes out at ≈6, ≈3 and ≈9. The two agree on the picture, and the card links to both pages.</p>
+          </div>
+          <figure class="shot">
+            <img src="screenshots/content-advisory.webp" alt="The StreamRating hover card for Ted on a Netflix title page, with IMDb, Rotten Tomatoes, Metacritic and TMDB scores, a content advisory box scoring Sex/Nudity, Violence/Gore and Language from Kids-In-Mind and IMDb, and the latest review" width="2686" height="1535" loading="lazy">
+          </figure>
         </div>
       </div>
     </section>

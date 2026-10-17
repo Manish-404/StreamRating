@@ -12,6 +12,7 @@ YouTube thumbnails, with review summaries, watch history and recommendations.
   <tr>
     <td><a href="docs/screenshots/netflix-browse.webp"><img src="docs/screenshots/netflix-browse.webp" alt="Netflix browse rows with rating badges and a hover card"></a></td>
     <td><a href="docs/screenshots/netflix-detail.png"><img src="docs/screenshots/netflix-detail.png" alt="Netflix title page with ratings and a review summary"></a></td>
+    <td><a href="docs/screenshots/content-advisory.webp"><img src="docs/screenshots/content-advisory.webp" alt="Hover card with a content advisory from Kids-In-Mind and IMDb"></a></td>
     <td><a href="docs/screenshots/settings.png"><img src="docs/screenshots/settings.png" alt="Settings tab"></a></td>
   </tr>
 </table>
@@ -30,6 +31,22 @@ YouTube thumbnails, with review summaries, watch history and recommendations.
 - Your API keys stay in your browser and are never saved to Drive or the backup folder.
 
 ![Settings page](docs/screenshots/settings.png)
+
+## Content advisory
+
+Open a hover card and StreamRating scores the title for **sex and nudity**, **violence and gore** and **language**,
+each from 0 (none) to 10 (extreme), from two sources:
+
+- **[Kids-In-Mind](https://kids-in-mind.com)** gives its own 0 to 10 score for each category, for films it has reviewed.
+  This is the more precise source.
+- **IMDb's Parents Guide** rates each category None, Mild, Moderate or Severe. These are shown as 0, 3, 6 or 9 with a
+  `≈`, because they are rougher than Kids-In-Mind's numbers.
+
+Scores are coloured green (3 or less), amber (4 to 6) or red (7 or more). If only one source has the title you see
+just that one, and the card links to the full page on each. For *Ted* (2012), Kids-In-Mind gives sex/nudity 8,
+violence/gore 5 and language 10, and IMDb comes out at about 6, 3 and 9.
+
+[![Hover card for Ted with the content advisory from Kids-In-Mind and IMDb](docs/screenshots/content-advisory.webp)](docs/screenshots/content-advisory.webp)
 
 ## Setup
 
