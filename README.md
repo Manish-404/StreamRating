@@ -4,6 +4,7 @@ A browser extension (Firefox and Chrome) that shows IMDb, OMDb, TMDB and Rotten 
 YouTube thumbnails, with review summaries, watch history and recommendations.
 
 **Website:** https://manish-404.github.io/StreamRating/
+**Firefox add-on:** https://addons.mozilla.org/en-US/firefox/addon/streamrating/
 
 ![StreamRating screenshots: Netflix browse rows, a title page and the settings tab](docs/screenshots/carousel.gif)
 

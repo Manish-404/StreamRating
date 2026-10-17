@@ -36,6 +36,20 @@ export interface SiteAdapter {
     /** CSS for the element holding the chips; by default it sits inline, after the anchor's other contents. */
     hostStyle?: string;
   };
+  /**
+   * The big featured title at the top of a home page (Netflix's billboard, a different title on each load). Same
+   * shape as `detail`; `expected` says on which pages one should be found, so a miss there can be reported.
+   */
+  billboard?: {
+    find(doc: Document, known: Map<string, MatchQuery>): { query: MatchQuery; anchor: HTMLElement } | null;
+    hostStyle?: string;
+    expected(url: URL): boolean;
+    /** The same title again, on the billboard itself: the element to lay a corner badge over. */
+    frame?: {
+      find(doc: Document, known: Map<string, MatchQuery>): { query: MatchQuery; anchor: HTMLElement } | null;
+      hostStyle?: string;
+    };
+  };
   /** The episode list inside a detail screen: which season, and each row with its episode number. */
   episodes?: {
     find(doc: Document): { season: number; rows: { episode: number; row: HTMLElement }[] } | null;

@@ -73,6 +73,60 @@ export function describeDetail(): Record<string, unknown> {
   return { dataUia: [...names], dialogs, playButtons: plays };
 }
 
+/**
+ * When a home page shows no recognised billboard: the Play buttons with their parents, and what the first section
+ * of the page holds (pictures with their alt and title, headings, labels, data-uia names, title links, text).
+ */
+export function describeBillboard(): Record<string, unknown> {
+  const chainOf = (start: Element, depth: number) => {
+    const chain: string[] = [];
+    for (let el: Element | null = start, i = 0; el && el !== document.body && i < depth; el = el.parentElement, i++) chain.push(short(el) + ' {' + attrs(el) + '}');
+    return chain;
+  };
+  const plays = Array.from(document.querySelectorAll('[data-uia*="play" i], button, a[href*="/watch/"]'))
+    .filter((b) => b.matches('[data-uia*="play" i]') || /^play\b/i.test((b.textContent ?? '').trim() || b.getAttribute('aria-label') || ''))
+    .slice(0, 4)
+    .map((b) => ({ visible: isRenderable(b), size: size(b), text: (b.textContent ?? '').trim().slice(0, 30), chain: chainOf(b, 7) }));
+  const section = Array.from(document.querySelectorAll('[data-uia="billboard"], section')).find(isRenderable);
+  if (!section) return { playButtons: plays, firstSection: null };
+  const names = new Set<string>();
+  for (const el of section.querySelectorAll('[data-uia]')) if (names.size < 30) names.add(el.getAttribute('data-uia')!);
+  return {
+    playButtons: plays,
+    firstSection: {
+      chain: chainOf(section, 4),
+      size: size(section),
+      images: Array.from(section.querySelectorAll('img'))
+        .slice(0, 6)
+        .map((i) => short(i) + ' alt="' + i.alt.slice(0, 50) + '" title="' + (i.getAttribute('title') ?? '').slice(0, 50) + '" ' + size(i)),
+      headings: Array.from(section.querySelectorAll('h1, h2, h3, h4, [role="heading"]')).slice(0, 4).map((e) => (e.textContent ?? '').trim().slice(0, 60)),
+      labels: Array.from(section.querySelectorAll('[aria-label]')).slice(0, 8).map((e) => short(e) + ': ' + e.getAttribute('aria-label')!.slice(0, 60)),
+      dataUia: [...names],
+      links: Array.from(section.querySelectorAll('a[href]')).slice(0, 4).map((a) => a.getAttribute('href')!.slice(0, 60)),
+      text: (section.textContent ?? '').replace(/\s+/g, ' ').trim().slice(0, 200),
+    },
+  };
+}
+
+/** When a title dialog shows "More Like This" but no tile was recognised: the pictures after that heading, with parents. */
+export function describeMoreLikeThis(): Record<string, unknown> {
+  const dialog = Array.from(document.querySelectorAll<HTMLElement>('[role="dialog"]')).find(isRenderable);
+  if (!dialog) return { dialog: false };
+  let header: Element | null = null;
+  const walker = document.createTreeWalker(dialog, NodeFilter.SHOW_TEXT);
+  for (let n = walker.nextNode(); n && !header; n = walker.nextNode()) if (/^\s*more like this\s*$/i.test(n.textContent ?? '')) header = n.parentElement;
+  if (!header) return { dialog: true, header: null };
+  const images = Array.from(dialog.querySelectorAll('img'))
+    .filter((i) => header!.compareDocumentPosition(i) & Node.DOCUMENT_POSITION_FOLLOWING)
+    .slice(0, 3)
+    .map((img) => {
+      const chain: string[] = [];
+      for (let el: Element | null = img, i = 0; el && el !== dialog && i < 7; el = el.parentElement, i++) chain.push(short(el) + ' {' + attrs(el) + '} starts="' + piece(el) + '"');
+      return { alt: img.alt.slice(0, 40), size: size(img), chain };
+    });
+  return { header: short(header), images };
+}
+
 const piece = (el: Element): string => {
   const walker = el.ownerDocument.createTreeWalker(el, NodeFilter.SHOW_TEXT);
   for (let n = walker.nextNode(); n; n = walker.nextNode()) {

@@ -1,7 +1,7 @@
 import { defineContentScript } from 'wxt/utils/define-content-script';
 import { createBadges } from '../../content/badges';
-import { createDetail } from '../../content/detail';
-import { describeBadge, describeVisibleThumbnails, isRenderable } from '../../content/diagnose';
+import { createBillboard, createDetail } from '../../content/detail';
+import { describeBadge, describeMoreLikeThis, describeVisibleThumbnails, isRenderable } from '../../content/diagnose';
 import { startScanner } from '../../content/scanner';
 import { getSettings } from '../../settings';
 import { adapterFor } from '../../sites';
@@ -17,7 +17,12 @@ export default defineContentScript({
     // A site turned off in Settings takes effect on the next page load.
     if (!(await getSettings()).sites[adapter.id]) return;
     console.info('[StreamRating] content script started on ' + adapter.id + ', build ' + __BUILD_TIME__);
-    startScanner(adapter, createBadges(adapter), createDetail(adapter));
+    const updateDetail = createDetail(adapter);
+    const updateBillboard = createBillboard(adapter);
+    startScanner(adapter, createBadges(adapter), () => {
+      updateDetail();
+      updateBillboard();
+    });
 
     // If nothing shows up, this is the first thing to look at (DevTools console, filter "StreamRating").
     // Sites are single-page apps, so check again after every address change, not just at load.
@@ -42,6 +47,17 @@ export default defineContentScript({
       }
       else console.warn('[StreamRating] ' + adapter.id + ': no visible thumbnails recognised (' + all.length + ' hidden ones found) on ' + location.pathname + '. If thumbnails are visible, the site markup has changed; the selectors live in src/sites/' + adapter.id + '.ts. On screen: ' + JSON.stringify(describeVisibleThumbnails()));
     };
+    // A title dialog that lists "More Like This" but none of its tiles got a badge: say what its markup is, once.
+    let reportedMoreLike = '';
+    window.setInterval(() => {
+      if (reportedMoreLike === location.href || !/[?&]jbv=\d+|\/title\/\d+/.test(location.href)) return;
+      const d = describeMoreLikeThis();
+      if (!d.header || !(d.images as unknown[])?.length) return;
+      if (adapter.findCards(document).some((c) => c.closest('[role="dialog"]') && c.querySelector('streamrating-badge'))) return;
+      reportedMoreLike = location.href;
+      console.info('[StreamRating] "More Like This" tiles not recognised. ' + JSON.stringify(d));
+    }, 6000);
+
     let lastUrl = location.href;
     let reportTimer = window.setTimeout(report, 4000);
     window.setInterval(() => {
