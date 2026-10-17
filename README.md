@@ -1,7 +1,7 @@
 # StreamRating
 
 A browser extension (Firefox and Chrome) that shows IMDb, OMDb, TMDB and Rotten Tomatoes ratings on Netflix and
-YouTube thumbnails, with review summaries, watch history and recommendations.
+YouTube thumbnails, with the latest user review and a content advisory (sex/nudity, violence/gore, language).
 
 **Website:** https://manish-404.github.io/StreamRating/
 **Firefox add-on:** https://addons.mozilla.org/en-US/firefox/addon/streamrating/
@@ -20,15 +20,18 @@ YouTube thumbnails, with review summaries, watch history and recommendations.
 ## Features
 
 - Ratings badges on Netflix thumbnails, the home-page billboard, "More Like This" tiles, title pages and individual
-  episodes.
+  episodes. Episodes show their own IMDb score, and hovering one opens the episode's air date, runtime, plot and
+  scores.
 - Ratings on YouTube for films sold on YouTube Movies & TV, and for videos whose title names a film and says
   "Movie", "Film", "Trailer" or "Teaser" (for example "Pushpa 2 Full Movie Hindi Dubbed" or "Dune: Part Two |
   Official Trailer"). Also under the title on the watch page. Other videos get no badge.
-- Hover card with the ratings, synopsis and a summary of the latest review.
+- Hover card with IMDb, Rotten Tomatoes, Metacritic and TMDB scores, the synopsis, cast and the latest user review
+  (author, their score, date and an excerpt, with spoilers flagged and a link to read it in full).
+  The card scrolls when it is taller than the window.
 - Content advisory in the hover card: sex/nudity, violence/gore and language scores out of 10, from Kids-In-Mind and
   IMDb's Parents Guide, for whichever of them has the title.
-- Watch history, watchlist and a "For You" recommendations tab.
-- Your API keys stay in your browser and are never saved to Drive or the backup folder.
+- Switch Netflix and YouTube on or off in Settings.
+- Your API keys stay in this browser only.
 
 ![Settings page](docs/screenshots/settings.png)
 
@@ -47,6 +50,12 @@ just that one, and the card links to the full page on each. For *Ted* (2012), Ki
 violence/gore 5 and language 10, and IMDb comes out at about 6, 3 and 9.
 
 [![Hover card for Ted with the content advisory from Kids-In-Mind and IMDb](docs/screenshots/content-advisory.webp)](docs/screenshots/content-advisory.webp)
+
+## Planned
+
+These have tabs in the options page but are **not built yet**: watch history, a watchlist, "For You" recommendations,
+and backup to Google Drive or a local folder. More streaming sites (Hotstar, Prime Video, Zee5, Sony Liv) will follow
+as their adapters are written.
 
 ## Setup
 

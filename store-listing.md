@@ -5,7 +5,7 @@ characters) and, on addons.mozilla.org, the summary and tags. Keep the descripti
 that have an adapter in `src/sites/`.
 
 ## Summary / description (in use)
-IMDb, OMDb, TMDB and Rotten Tomatoes video ratings on Netflix and YouTube, with review summaries, watch history and recommendations.
+IMDb, OMDb, TMDB and Rotten Tomatoes video ratings on Netflix and YouTube, with the latest user review and a content advisory.
 
 ## AMO tags / search keywords
 rating, ratings, imdb rating, omdb rating, tmdb rating, rotten tomatoes, video rating, imdb, netflix, youtube, youtube movies
