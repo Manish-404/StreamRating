@@ -14,21 +14,21 @@ export function Chips({ info }: { info: TitleInfo }) {
   const chips = [];
   if (info.imdbRating !== null) {
     chips.push(
-      <span key="imdb" class={'chip ' + outOfTenTone(info.imdbRating)}>
+      <span key="imdb" class={'chip imdb ' + outOfTenTone(info.imdbRating)}>
         <b>IMDb</b> {info.imdbRating.toFixed(1)}
       </span>,
     );
   }
   if (info.rtCritics !== null) {
     chips.push(
-      <span key="rt" class={'chip ' + percentTone(info.rtCritics)}>
+      <span key="rt" class={'chip rt ' + percentTone(info.rtCritics)}>
         <b>RT</b> {info.rtCritics}%
       </span>,
     );
   }
   if (chips.length === 0 && info.tmdbRating !== null) {
     chips.push(
-      <span key="tmdb" class={'chip ' + outOfTenTone(info.tmdbRating)} title="IMDb and Rotten Tomatoes scores are not available, so this is the TMDB score.">
+      <span key="tmdb" class={'chip tmdb ' + outOfTenTone(info.tmdbRating)} title="IMDb and Rotten Tomatoes scores are not available, so this is the TMDB score.">
         <b>TMDB</b> {info.tmdbRating.toFixed(1)}
       </span>,
     );
@@ -48,7 +48,14 @@ export function Badge({ state, onEnter, onLeave, onSetup }: BadgeProps) {
       </span>
     );
   }
-  if (state.status === 'loading') return <span class="badge"><span class="chip dim">...</span></span>;
+  if (state.status === 'loading')
+    return (
+      <span class="badge">
+        <span class="chip dim" role="status" aria-label="Loading ratings">
+          <span class="spinner" />
+        </span>
+      </span>
+    );
 
   if (state.status === 'error') {
     if (state.kind === 'missing_key') {

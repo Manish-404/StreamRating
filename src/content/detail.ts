@@ -5,7 +5,7 @@ import { sendMessage } from '../messaging/protocol';
 import type { SiteAdapter } from '../sites/types';
 import { Badge } from './Badge';
 import { scheduleClose, scheduleOpen } from './card';
-import { describeBillboard, describeDetail } from './diagnose';
+import { describeBillboard, describeDetail, isRenderable } from './diagnose';
 import { createEpisodeRatings } from './episodes';
 import { knownTitles } from './known';
 import type { BadgeState } from './state';
@@ -14,6 +14,7 @@ import css from './ui.css?inline';
 interface Place {
   find(doc: Document, known: Map<string, MatchQuery>): { query: MatchQuery; anchor: HTMLElement } | null;
   hostStyle?: string;
+  fit?(anchor: HTMLElement): HTMLElement | null;
 }
 
 interface Hooks {
@@ -68,6 +69,12 @@ function createPlacement(tag: string, place: Place | undefined, hooks: Hooks) {
     hooks.onInfo?.(info);
   }
 
+  /** Give the box the height of a sibling button (More Info), so the two line up. */
+  function fit(anchor: HTMLElement) {
+    const h = place?.fit?.(anchor)?.getBoundingClientRect().height ?? 0;
+    if (host && h > 0) host.style.height = Math.round(h) + 'px';
+  }
+
   return function update(): void {
     const found = place?.find(document, knownTitles);
     if (!found) {
@@ -85,9 +92,11 @@ function createPlacement(tag: string, place: Place | undefined, hooks: Hooks) {
     if (/position:\s*absolute/.test(place?.hostStyle ?? '') && getComputedStyle(found.anchor).position === 'static') found.anchor.style.position = 'relative';
     if (key === k && el.parentElement === found.anchor) {
       hooks.onInfo?.(info); // the episode list changes when the season is switched
+      fit(found.anchor);
       return;
     }
     found.anchor.append(el);
+    fit(found.anchor);
     if (key !== k) {
       key = k;
       paint({ status: 'loading' });
@@ -125,6 +134,12 @@ export function createBillboard(adapter: SiteAdapter) {
     },
     onMissing() {
       if (!adapter.billboard?.expected(new URL(location.href))) return;
+      // Nothing to report while the page is still loading: wait until a billboard is on screen.
+      const box = document.querySelector<HTMLElement>('[data-uia="billboard"]');
+      if (!box || !isRenderable(box)) {
+        missingSince = 0;
+        return;
+      }
       missingSince ||= Date.now();
       // Say once per address what the top of the page holds, so the selectors can be fixed from one pasted line.
       if (Date.now() - missingSince < BILLBOARD_GRACE_MS || reportedFor === location.href) return;
@@ -132,10 +147,26 @@ export function createBillboard(adapter: SiteAdapter) {
       console.info('[StreamRating] billboard not recognised. ' + JSON.stringify(describeBillboard()));
     },
   });
+  // Once per title: where the ratings went and what is drawn on top of them, to tell "not placed" from "covered".
+  let reportedPlaced = '';
+  const reportPlaced = () => {
+    const host = document.querySelector<HTMLElement>('streamrating-billboard');
+    const found = adapter.billboard?.find(document, knownTitles);
+    if (!host || !found || reportedPlaced === found.query.title) return;
+    reportedPlaced = found.query.title;
+    const r = host.getBoundingClientRect();
+    const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    const name = (el: Element | null) => (el ? el.tagName.toLowerCase() + (el.getAttribute('data-uia') ? '[' + el.getAttribute('data-uia') + ']' : '') : 'nothing');
+    console.info(
+      '[StreamRating] billboard: "' + found.query.title + '" rated in ' + name(host.parentElement) + ' at ' + Math.round(r.left) + ',' + Math.round(r.top) +
+        ' size ' + Math.round(r.width) + 'x' + Math.round(r.height) + '; on top there: ' + (top === host ? 'the ratings (visible)' : name(top)),
+    );
+  };
   // The same rating again on the billboard itself, in its corner.
   const onIt = createPlacement('streamrating-billboard-badge', adapter.billboard?.frame, {});
   return () => {
     beside();
     onIt();
+    reportPlaced();
   };
 }

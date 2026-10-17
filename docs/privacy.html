@@ -13,7 +13,7 @@
 </head>
 <body>
   <h1>StreamRating privacy policy</h1>
-  <p>Last updated: 12 October 2026</p>
+  <p>Last updated: 17 October 2026</p>
 
   <p>StreamRating is a browser extension that shows IMDb and Rotten Tomatoes ratings on streaming thumbnails. It has no account system and no server of its own. This page explains what data it handles.</p>
 
@@ -30,6 +30,12 @@
     <li><strong>The Movie Database (TMDB)</strong>, <code>api.themoviedb.org</code>, to identify the title and fetch details and images.</li>
     <li><strong>OMDb</strong>, <code>www.omdbapi.com</code>, to fetch IMDb and Rotten Tomatoes ratings.</li>
   </ul>
+  <p>When you hover a title to open its card, the extension also fetches the title's content advisory (sex/nudity, violence/gore and language scores) by requesting the matching public page from:</p>
+  <ul>
+    <li><strong>Kids-In-Mind</strong>, <code>kids-in-mind.com</code>, and</li>
+    <li><strong>IMDb</strong>, <code>www.imdb.com</code> (the title's Parents Guide).</li>
+  </ul>
+  <p>These are ordinary page requests with no API key and no account; they reveal the title's name or IMDb id to those sites.</p>
   <p>These requests use your own API key, so they are tied to your key under those services' own terms and privacy policies. Because the titles you browse can reveal your viewing interests, Firefox shows this as "browsing activity" data collection.</p>
 
   <h2>What is not collected</h2>

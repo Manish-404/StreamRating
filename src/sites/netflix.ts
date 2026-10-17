@@ -111,7 +111,20 @@ function findDetail(doc: Document, known: Map<string, MatchQuery>): { query: Mat
     if (!title) return null;
     query = { title, platform: 'netflix' };
   }
-  return { query: { ...query, platformId: id }, anchor };
+  return { query: { ...query, ...detailFacts(doc), platformId: id }, anchor };
+}
+
+/**
+ * Film or series, and the year, from the detail window's facts line ("2012 1h 46m HD", "2024 3 Seasons"): a film
+ * must not be matched to a series of the same name (Ted the film, Ted the series).
+ */
+function detailFacts(doc: Document): Pick<MatchQuery, 'type' | 'year'> {
+  const box = Array.from(doc.querySelectorAll<HTMLElement>('[data-uia="videoMetadata--container"], .videoMetadata--container')).find(isRenderable);
+  const text = clean(box?.textContent);
+  if (!text) return {};
+  const year = /\b(19\d\d|20\d\d)\b/.exec(text)?.[1];
+  const type = /\b\d+\s*(?:seasons?|episodes?|parts?)\b|\blimited series\b/i.test(text) ? 'tv' : /\b\d+h(?:\s*\d+m)?\b|\b\d+\s*m(?:in)?\b/i.test(text) ? 'movie' : undefined;
+  return { ...(type ? { type } : {}), ...(year ? { year: Number(year) } : {}) };
 }
 
 /** Home and genre pages carry a billboard; My List and the player do not. */
@@ -121,9 +134,21 @@ const hasBillboard = (url: URL) => (url.pathname === '/browse' || url.pathname.s
 const NOT_A_NAME = /^(?:netflix|n|top 10|new|recently added|play|more info|u\/a.*|tv-.*|pg.*|r|a|\d+\+)$/i;
 
 /** A name read from an attribute or a short piece of text, or '' when it is empty or one of Netflix's own words. */
+/** Netflix's internal artwork codes used as alt text, e.g. "LOGO_UNBRANDED_STACKED|18aab9a1-ea15-…|en". */
+const ASSET_CODE = /\||^[A-Z0-9]+(?:_[A-Z0-9]+)+$|[0-9a-f]{8}-[0-9a-f]{4}-/i;
+
+/** The facts line under a billboard logo, e.g. "Series•Thriller•2026•8 Episodes•A": bullets, or a year with a type or length. */
+const FACTS_LINE = /[•·]|\b(?:19|20)\d\d\b.*\b(?:episodes?|seasons?|min|h)\b|\b(?:series|movie)\b.*\b(?:19|20)\d\d\b/i;
+
+/** "1899, 1899" (the label repeats the name) is "1899". */
+const unrepeated = (s: string | undefined) => {
+  const parts = (s ?? '').split(/,\s*/);
+  return parts.length === 2 && parts[0] === parts[1] ? parts[0] : (s ?? '');
+};
+
 const asName = (s: string | null | undefined) => {
   const t = clean(s);
-  return t.length >= 1 && t.length <= 80 && !NOT_A_NAME.test(t) ? t : '';
+  return t.length >= 1 && t.length <= 80 && !NOT_A_NAME.test(t) && !ASSET_CODE.test(t) && !FACTS_LINE.test(t) ? t : '';
 };
 
 /**
@@ -159,7 +184,8 @@ function findNamedBillboard(doc: Document, known: Map<string, MatchQuery>): { qu
   const href = row.querySelector('a[href*="/watch/"], a[href*="/title/"], a[href*="jbv="]')?.getAttribute('href') ?? '';
   const id = TITLE_ID.exec(href)?.[1];
   const seen = id ? known.get(id) : undefined;
-  let title = seen?.title ?? '';
+  // Netflix labels the billboard itself: <section aria-label="Featured Content: Heart of Stone" data-uia="billboard">.
+  let title = seen?.title ?? asName(unrepeated(/^featured content:\s*(.+)$/i.exec(clean(box.getAttribute('aria-label')))?.[1]));
   for (const part of box.querySelectorAll('[data-uia="billboard-logo"], [data-uia="billboard-title"]')) {
     if (title) break;
     title =
@@ -168,7 +194,7 @@ function findNamedBillboard(doc: Document, known: Map<string, MatchQuery>): { qu
       asName(part.getAttribute('title')) ||
       asName(part.querySelector('img')?.getAttribute('alt')) ||
       asName(part.querySelector('[aria-label]')?.getAttribute('aria-label')) ||
-      asName(part.textContent);
+      (part.getAttribute('data-uia') === 'billboard-logo' ? asName(part.textContent) : '');
   }
   title ||= asName(box.querySelector('[data-uia="billboard-background-media+image"]')?.getAttribute('alt'));
   // "Play Black Adam", "More info about Black Adam": a label on the buttons or any element of the billboard.
@@ -255,7 +281,12 @@ export const netflix: SiteAdapter = {
     find: findBillboard,
     expected: hasBillboard,
     // Below the top menu, at the left edge where the title logo is, so it reads as part of the title.
-    frame: { find: findBillboardFrame, hostStyle: 'position: absolute; left: 4%; top: 84px; z-index: 5;' },
+    // After More Info, as tall as that button, in its grey rectangle.
+    hostStyle:
+      'display: inline-flex; align-items: center; box-sizing: border-box; margin-left: 12px; padding: 0 12px; border-radius: 4px; background: rgba(109, 109, 110, 0.7); vertical-align: top;',
+    fit: (anchor) =>
+      Array.from(anchor.querySelectorAll<HTMLElement>('[data-uia="billboard-more-info"]')).find(isRenderable) ?? null,
+    frame: { find: findBillboardFrame, hostStyle: 'position: absolute; left: 4%; top: 84px; z-index: 2147483000;' },
   },
   episodes: { find: findNetflixEpisodes },
   anchor: (card) => card.querySelector<HTMLElement>('.boxart-container') ?? card,

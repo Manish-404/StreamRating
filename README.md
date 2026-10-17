@@ -18,11 +18,14 @@ YouTube thumbnails, with review summaries, watch history and recommendations.
 
 ## Features
 
-- Ratings badges on Netflix thumbnails, title pages and individual episodes.
+- Ratings badges on Netflix thumbnails, the home-page billboard, "More Like This" tiles, title pages and individual
+  episodes.
 - Ratings on YouTube for films sold on YouTube Movies & TV, and for videos whose title names a film and says
   "Movie", "Film", "Trailer" or "Teaser" (for example "Pushpa 2 Full Movie Hindi Dubbed" or "Dune: Part Two |
   Official Trailer"). Also under the title on the watch page. Other videos get no badge.
 - Hover card with the ratings, synopsis and a summary of the latest review.
+- Content advisory in the hover card: sex/nudity, violence/gore and language scores out of 10, from Kids-In-Mind and
+  IMDb's Parents Guide, for whichever of them has the title.
 - Watch history, watchlist and a "For You" recommendations tab.
 - Your API keys stay in your browser and are never saved to Drive or the backup folder.
 
@@ -54,4 +57,5 @@ Built with [WXT](https://wxt.dev), TypeScript, Preact and Dexie.
 
 ## Privacy
 
-Titles you browse are sent to TMDB and OMDb to look up ratings. Nothing else leaves the browser. Full details are in the [privacy policy](https://manish-404.github.io/StreamRating/privacy.html).
+Titles you browse are sent to TMDB and OMDb to look up ratings, and to Kids-In-Mind and IMDb to look up the content
+advisory when you open a hover card. Nothing else leaves the browser. Full details are in the [privacy policy](https://manish-404.github.io/StreamRating/privacy.html).

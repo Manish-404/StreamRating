@@ -28,6 +28,7 @@ export default defineConfig({
       'https://www.omdbapi.com/*',
       'https://www.imdb.com/*',
       'https://www.rottentomatoes.com/*',
+      'https://kids-in-mind.com/*',
       'https://www.googleapis.com/*',
     ],
     ...(browser === 'firefox'

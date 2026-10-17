@@ -8,6 +8,11 @@
 .chip.bad { border-left-color: #f0524f; }
 .chip.dim { border-left-color: #8a8d96; color: #d6d8de; }
 .chip.setup { border-left-color: #8f7bff; cursor: pointer; }
+/* Each source in its own logo colours: IMDb yellow, Rotten Tomatoes red, TMDB blue. */
+.chip.imdb { background: #f5c518; color: #000; text-shadow: none; }
+.chip.rt { background: #fa320a; color: #fff; }
+.chip.tmdb { background: #01b4e4; color: #0d253f; }
+.chip.imdb b, .chip.rt b, .chip.tmdb b { opacity: 1; }
 
 .card { position: fixed; width: 340px; max-height: calc(100vh - 16px); overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; padding: 14px; border-radius: 10px; background: #16171b; color: #ececf1; border: 1px solid #34363f; box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6); font: 13px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; pointer-events: auto; }
 .card-top { display: flex; gap: 12px; }
@@ -23,14 +28,20 @@ h3 { margin: 0 0 2px; font-size: 16px; line-height: 1.25; font-weight: 700; }
 .score.bad { border-left-color: #f0524f; }
 .score-value { font-size: 17px; font-weight: 700; line-height: 1.1; }
 .score-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; color: #a3a6b0; }
+/* The pop-up scores in their source's logo colour (the stripe on the left still shows the score level). */
+.score.imdb .score-value, .score.imdb .score-label { color: #f5c518; }
+.score.rt .score-value, .score.rt .score-label { color: #fa5a3a; }
+.score.tmdb .score-value, .score.tmdb .score-label { color: #01b4e4; }
 .score-sub { font-size: 10px; color: #7e8190; }
 .tagline { margin: 10px 0 0; font-style: italic; color: #c9cbd3; }
 .overview { margin: 8px 0 0; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
 .people { margin: 8px 0 0; color: #c9cbd3; }
 .people b { color: #a3a6b0; font-weight: 600; margin-right: 4px; }
 .note { margin: 10px 0 0; padding: 7px 9px; border-radius: 6px; background: #26232f; color: #d9cfff; font-size: 12px; }
-.link { display: inline-block; margin-top: 10px; color: #a99bff; text-decoration: none; font-weight: 600; }
-.link:hover { text-decoration: underline; }
+/* The card's own button-like link: a clear hover, press and keyboard focus. */
+.link { display: inline-flex; align-items: center; gap: 4px; margin-top: 10px; padding: 6px 10px; border-radius: 6px; color: #c4b9ff; background: rgba(143, 123, 255, 0.12); text-decoration: none; font-weight: 600; transition: background-color 0.15s, color 0.15s; }
+.link:hover { background: rgba(143, 123, 255, 0.24); color: #fff; }
+.link:active { background: rgba(143, 123, 255, 0.32); }
 
 .detail { display: inline-flex; }
 .detail .chip { font-size: 13px; padding: 7px 10px; }
@@ -40,9 +51,19 @@ h3 { margin: 0 0 2px; font-size: 16px; line-height: 1.25; font-weight: 700; }
 .review { margin: 12px 0 0; padding: 10px 12px; border-radius: 8px; background: #1e2026; border-left: 3px solid #8f7bff; }
 .review-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 10px; font-size: 12px; color: #a3a6b0; }
 .review-head b { color: #ececf1; }
+/* Content advisory: one line per category, one value per source; low is good. */
+.advisory { margin: 12px 0 0; padding: 10px 12px; border-radius: 8px; background: #1e2026; border-left: 3px solid #5a5d6a; }
+.adv-row { display: flex; align-items: center; gap: 6px; margin-top: 6px; }
+.adv-label { flex: 1; font-size: 13px; color: #dcdee6; }
+.adv-val { min-width: 56px; padding: 2px 7px; border-radius: 4px; font-size: 12px; font-weight: 700; text-align: center; background: #26272d; color: #ececf1; }
+.adv-val.good { background: #1f5d33; }
+.adv-val.mid { background: #7a5a08; }
+.adv-val.bad { background: #8c2a28; }
+.adv-val.dim { color: #7e8190; font-weight: 600; }
 .review-text { margin: 6px 0 0; font-size: 13px; line-height: 1.5; color: #dcdee6; }
 .review-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 10px; margin-top: 6px; font-size: 11px; color: #7e8190; }
-.review-foot a { color: #a99bff; text-decoration: none; font-weight: 600; }
+.review-foot a { color: #a99bff; text-decoration: none; font-weight: 600; border-radius: 3px; transition: color 0.15s; }
+.review-foot a:hover { color: #d6ceff; text-decoration: underline; text-underline-offset: 2px; }
 .review-note { margin: 10px 0 0; font-size: 12px; color: #7e8190; }
 
 .still { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 6px; margin-bottom: 10px; background: #26272d; }
@@ -55,4 +76,27 @@ h3 { margin: 0 0 2px; font-size: 16px; line-height: 1.25; font-weight: 700; }
 /* Firefox does not read the webkit rules above. */
 @supports (-moz-appearance: none) {
   .card { scrollbar-width: thin; scrollbar-color: #5a5d6a #16171b; }
+}
+
+/* Keyboard focus on anything clickable in the card or the chips. */
+a:focus-visible, button:focus-visible { outline: 2px solid #a99bff; outline-offset: 2px; }
+
+/* Chips react to the pointer, so it is clear they open the card. */
+.chip { transition: filter 0.15s, transform 0.15s; cursor: default; }
+.badge:hover .chip:not(.dim) { filter: brightness(1.08); }
+.chip.setup:hover { filter: brightness(1.2); }
+.chip.setup:active { transform: translateY(1px); }
+
+/* Loading: a spinning ring, and a shimmer where the poster will appear. */
+.spinner { display: inline-block; flex: none; width: 12px; height: 12px; border: 2px solid rgba(255, 255, 255, 0.25); border-top-color: #fff; border-radius: 50%; animation: sr-spin 0.8s linear infinite; vertical-align: middle; }
+.chip .spinner { width: 10px; height: 10px; }
+.loading { display: flex; align-items: center; gap: 8px; }
+.loading .spinner { border-color: rgba(169, 155, 255, 0.25); border-top-color: #a99bff; }
+.poster.pending { background: linear-gradient(100deg, #26272d 30%, #33353d 50%, #26272d 70%); background-size: 200% 100%; animation: sr-shimmer 1.2s ease-in-out infinite; }
+@keyframes sr-spin { to { transform: rotate(360deg); } }
+@keyframes sr-shimmer { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .spinner { animation-duration: 2.4s; }
+  .poster.pending { animation: none; }
+  .chip, .link, .review-foot a { transition: none; }
 }

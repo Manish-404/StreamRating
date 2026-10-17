@@ -30,7 +30,7 @@ describe('badges on thumbnails', () => {
   it('shows a loading chip, then the ratings once the background answers', async () => {
     sendMessage.mockResolvedValue({ status: 'ok', info: info() } satisfies LookupResult);
     createBadges(netflix)(card(1));
-    expect(badgeText(card(1))).toContain('...');
+    expect(card(1).querySelector('streamrating-badge')?.shadowRoot?.querySelector('.chip .spinner')).not.toBeNull();
     await flush();
     expect(badgeText(card(1))).toContain('IMDb 8.7');
     expect(badgeText(card(1))).toContain('RT 95%');

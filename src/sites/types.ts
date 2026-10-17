@@ -43,6 +43,8 @@ export interface SiteAdapter {
   billboard?: {
     find(doc: Document, known: Map<string, MatchQuery>): { query: MatchQuery; anchor: HTMLElement } | null;
     hostStyle?: string;
+    /** An element in the anchor whose height the ratings box should take, so it lines up with it (the More Info button). */
+    fit?(anchor: HTMLElement): HTMLElement | null;
     expected(url: URL): boolean;
     /** The same title again, on the billboard itself: the element to lay a corner badge over. */
     frame?: {

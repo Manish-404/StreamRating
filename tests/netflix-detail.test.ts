@@ -45,3 +45,20 @@ describe('netflix detail screen', () => {
     expect(find()).toBeNull();
   });
 });
+
+describe('netflix detail window: film or series from its facts line', () => {
+  const open = (facts: string) => {
+    window.history.replaceState(null, '', '/title/70218756');
+    document.body.innerHTML =
+      '<div role="dialog" aria-label="Ted"><img alt="Ted" src="t.png"><div><button data-uia="play-button">Play</button></div>' +
+      '<div data-uia="videoMetadata--container">' + facts + '</div></div>';
+  };
+  it('reads a length as a film, with its year', () => {
+    open('<span>2012</span> <span>1h 46m</span> <span>HD</span>');
+    expect(netflix.detail!.find(document, new Map())?.query).toMatchObject({ title: 'Ted', type: 'movie', year: 2012 });
+  });
+  it('reads seasons as a series', () => {
+    open('<span>2024</span> <span>1 Season</span>');
+    expect(netflix.detail!.find(document, new Map())?.query).toMatchObject({ type: 'tv', year: 2024 });
+  });
+});

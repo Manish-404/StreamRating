@@ -91,7 +91,10 @@ export function describeBillboard(): Record<string, unknown> {
   if (!section) return { playButtons: plays, firstSection: null };
   const names = new Set<string>();
   for (const el of section.querySelectorAll('[data-uia]')) if (names.size < 30) names.add(el.getAttribute('data-uia')!);
+  const html = (sel: string) => section.querySelector(sel)?.outerHTML.replace(/\s+/g, ' ').slice(0, 1200) ?? null;
   return {
+    titleHtml: html('[data-uia="billboard-title"]'),
+    actionsHtml: html('[data-uia="billboard-actions"]'),
     playButtons: plays,
     firstSection: {
       chain: chainOf(section, 4),

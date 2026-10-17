@@ -131,3 +131,40 @@ describe('netflix billboard by its own data-uia names', () => {
     expect(find()).toBeNull();
   });
 });
+
+describe('netflix billboard logo with an artwork code for alt text', () => {
+  it('does not search for the code as a title', () => {
+    document.body.innerHTML =
+      '<div data-uia="billboard"><div data-uia="billboard-title"><img data-uia="billboard-logo" alt="LOGO_UNBRANDED_STACKED|18aab9a1-ea15-11f0-8eb7-12793a04dabd|en" src="l.png"></div>' +
+      '<div data-uia="billboard-actions"><button data-uia="play-video-button">Play</button></div></div>';
+    expect(find()).toBeNull();
+  });
+});
+
+describe('netflix billboard facts line', () => {
+  it('never takes "Series•Thriller•2026•8 Episodes•A" as the title', () => {
+    document.body.innerHTML =
+      '<div data-uia="billboard"><div data-uia="billboard-title"><img alt="" src="l.png"><div>Series•Thriller•2026•8 Episodes•A</div></div>' +
+      '<div data-uia="billboard-actions"><button data-uia="play-video-button">Play</button></div></div>';
+    expect(find()).toBeNull();
+  });
+});
+
+describe('netflix billboard labelled "Featured Content: <title>"', () => {
+  it('reads the title from the billboard label even when the logo only has an artwork code', () => {
+    document.body.innerHTML =
+      '<section aria-label="Featured Content: Heart of Stone" data-uia="billboard"><div data-uia="billboard-title"><img data-uia="billboard-logo" alt="LOGO_UNBRANDED_STACKED|e1531d70-f684-11ed-a795-0ed739fb4027|en" src="l.png">' +
+      '<div data-uia="attributes-elements"><span>Action</span><p>•</p><span>2023</span></div></div>' +
+      '<div data-uia="billboard-actions" id="acts"><button data-uia="play-video-button">Play</button></div></section>';
+    expect(find()?.query.title).toBe('Heart of Stone');
+  });
+});
+
+describe('netflix billboard label that repeats the name', () => {
+  it('reads "1899, 1899" as 1899', () => {
+    document.body.innerHTML =
+      '<section aria-label="Featured Content: 1899, 1899" data-uia="billboard"><div data-uia="billboard-actions" id="acts"><button data-uia="play-video-button">Play</button></div></section>';
+    expect(find()?.query.title).toBe('1899');
+    expect(find()?.anchor.id).toBe('acts');
+  });
+});

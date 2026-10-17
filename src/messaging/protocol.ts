@@ -2,6 +2,7 @@ import { defineExtensionMessaging } from '@webext-core/messaging';
 import type { QuotaUsage } from '../api/queue';
 import type { LookupResult, MatchQuery } from '../match/types';
 import type { MediaType } from '../db/types';
+import type { AdvisoryQuery, AdvisoryResult } from '../services/advisory';
 import type { EpisodeResult } from '../services/episodeInfo';
 import type { ReviewResult } from '../services/reviews';
 import type { SeasonResult } from '../services/seasons';
@@ -29,6 +30,8 @@ interface ProtocolMap {
   getEpisode(args: { tmdbId: number; season: number; episode: number }): EpisodeResult;
   /** The most recent user review of a title. */
   getLatestReview(args: { type: MediaType; tmdbId: number }): ReviewResult;
+  /** Sex/nudity, violence/gore and language scores from Kids-In-Mind and IMDb's Parents Guide. */
+  getAdvisory(args: AdvisoryQuery): AdvisoryResult;
   /** Content scripts cannot open the options page themselves. */
   openSettings(): void;
 }
