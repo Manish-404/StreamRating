@@ -22,9 +22,9 @@ YouTube thumbnails, with the latest user review and a content advisory (sex/nudi
 - Ratings badges on Netflix thumbnails, the home-page billboard, "More Like This" tiles, title pages and individual
   episodes. Episodes show their own IMDb score, and hovering one opens the episode's air date, runtime, plot and
   scores.
-- Ratings on YouTube for films sold on YouTube Movies & TV, and for videos whose title names a film and says
-  "Movie", "Film", "Trailer" or "Teaser" (for example "Pushpa 2 Full Movie Hindi Dubbed" or "Dune: Part Two |
-  Official Trailer"). Also under the title on the watch page. Other videos get no badge.
+- Ratings on YouTube movies: full movies, trailers and teasers, including dubbed films, get a rating badge in search
+  results, the home feed, Movies & TV and the watch-page sidebar, and the scores sit under the title on the watch
+  page. Hover a badge for the same card you get on Netflix. Videos that are not films get no badge.
 - Hover card with IMDb, Rotten Tomatoes, Metacritic and TMDB scores, the synopsis, cast and the latest user review
   (author, their score, date and an excerpt, with spoilers flagged and a link to read it in full).
   The card scrolls when it is taller than the window.

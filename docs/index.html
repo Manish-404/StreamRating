@@ -137,6 +137,7 @@
     .car-btn { position: absolute; top: calc(50% - 40px); width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(255,255,255,.25); background: rgba(10,11,14,.7); color: #fff; font-size: 26px; line-height: 1; cursor: pointer; display: grid; place-items: center; }
     .car-btn:hover { background: var(--accent); color: var(--on-accent); }
     .car-btn.prev { left: 12px; } .car-btn.next { right: 12px; }
+    .car-btn.pause { top: 12px; right: 12px; width: 36px; height: 36px; font-size: 13px; letter-spacing: -1px; }
     .dots { position: absolute; left: 0; right: 0; bottom: 48px; display: flex; gap: 8px; justify-content: center; }
     .dots button { width: 10px; height: 10px; padding: 0; border-radius: 50%; border: 0; background: rgba(255,255,255,.4); cursor: pointer; }
     .dots button[aria-selected="true"] { background: var(--accent); width: 24px; border-radius: 6px; }
@@ -253,6 +254,7 @@
           </div>
           <button class="car-btn prev" type="button" aria-label="Previous screenshot">‹</button>
           <button class="car-btn next" type="button" aria-label="Next screenshot">›</button>
+          <button class="car-btn pause" id="pause" type="button" aria-label="Pause automatic scrolling">❚❚</button>
           <div class="dots" id="dots" role="tablist" aria-label="Choose a screenshot"></div>
         </div>
       </div>
@@ -266,7 +268,7 @@
         <div class="grid">
           <div class="card"><div class="ico" aria-hidden="true">★</div><h3>Ratings on thumbnails</h3><p>IMDb, TMDB and Rotten Tomatoes scores on Netflix rows, the home billboard, More Like This tiles, title pages and episodes.</p></div>
           <div class="card"><div class="ico" aria-hidden="true">✎</div><h3>Latest review</h3><p>Hover a title for its synopsis, cast and the latest user review (author, score, date and an excerpt), with spoilers flagged.</p></div>
-          <div class="card"><div class="ico" aria-hidden="true">▶</div><h3>YouTube too</h3><p>Films on YouTube Movies &amp; TV, and videos titled as a film, trailer or teaser, get a badge. Other videos get none.</p></div>
+          <div class="card"><div class="ico" aria-hidden="true">▶</div><h3>YouTube movie ratings</h3><p>Full movies, trailers and teasers on YouTube, dubbed ones included, show their IMDb and Rotten Tomatoes scores on the thumbnail and under the title on the watch page. Hover for the full card.</p></div>
           <div class="card"><div class="ico" aria-hidden="true">!</div><h3>Content advisory</h3><p>Sex/nudity, violence/gore and language out of 10, from Kids-In-Mind and IMDb's Parents Guide, in the hover card.</p></div>
           <div class="card"><div class="ico" aria-hidden="true">↺</div><h3>Episode by episode</h3><p>Every Netflix episode gets its own IMDb score. Hover it for the air date, runtime, plot and TMDB score.</p></div>
           <div class="card"><div class="ico" aria-hidden="true">✦</div><h3>Four scores in one card</h3><p>IMDb, Rotten Tomatoes, Metacritic and TMDB side by side in the hover card, coloured by how good they are.</p></div>
@@ -365,7 +367,7 @@ npm run build:firefox    # Firefox</pre></li>
         <p class="kicker">FAQ</p>
         <h2 id="faq-title">Questions</h2>
         <details><summary>Is it free?</summary><p>Yes. The extension is free and open source. The TMDB and OMDb keys are free too; OMDb's free keys allow 1,000 requests a day.</p></details>
-        <details><summary>Which sites does it work on?</summary><p>Netflix, and YouTube for films, trailers and teasers. Hotstar, Prime Video, Zee5 and Sony Liv are planned; each needs its own adapter. Watch history, a watchlist and recommendations are planned too but are not built yet.</p></details>
+        <details><summary>Which sites does it work on?</summary><p>Netflix, and YouTube for movies, trailers and teasers. Hotstar, Prime Video, Zee5 and Sony Liv are planned; each needs its own adapter. Watch history, a watchlist and recommendations are planned too but are not built yet.</p></details>
         <details><summary>Where do the ratings come from?</summary><p>IMDb, Rotten Tomatoes and Metacritic scores via OMDb, plus the TMDB score. The latest review comes from TMDB's user reviews. Content advisories come from Kids-In-Mind and IMDb's Parents Guide.</p></details>
         <details><summary>Why does it need my own API keys?</summary><p>So the extension has no server and no shared quota. Your lookups go straight from your browser to the rating services.</p></details>
         <details><summary>Is it affiliated with IMDb, Netflix or Rotten Tomatoes?</summary><p>No. StreamRating is an independent project. Those names belong to their owners.</p></details>
@@ -412,25 +414,44 @@ npm run build:firefox    # Firefox</pre></li>
         cur = Math.round(track.scrollLeft / track.clientWidth);
         Array.prototype.forEach.call(dots.children, function (d, k) { d.setAttribute('aria-selected', k === cur); });
       }
+      var hover = false, focus = false, paused = false, pauseBtn = document.getElementById('pause');
       function stop() { if (timer) { clearInterval(timer); timer = null; } }
+      /* (Re)start the 5 s countdown unless the viewer is hovering, keyboard-focused, paused or on another tab */
+      function play() {
+        stop();
+        if (!paused && !hover && !focus && !document.hidden) timer = setInterval(function () { go(cur + 1); }, 5000);
+      }
       for (var i = 0; i < n; i++) {
         (function (k) {
           var b = document.createElement('button');
           b.type = 'button'; b.setAttribute('role', 'tab'); b.setAttribute('aria-label', 'Screenshot ' + (k + 1));
-          b.addEventListener('click', function () { stop(); go(k); });
+          b.addEventListener('click', function () { go(k); play(); });
           dots.appendChild(b);
         })(i);
       }
-      document.querySelector('.car-btn.prev').addEventListener('click', function () { stop(); go(cur - 1); });
-      document.querySelector('.car-btn.next').addEventListener('click', function () { stop(); go(cur + 1); });
+      document.querySelector('.car-btn.prev').addEventListener('click', function () { go(cur - 1); play(); });
+      document.querySelector('.car-btn.next').addEventListener('click', function () { go(cur + 1); play(); });
       track.addEventListener('scroll', sync, { passive: true });
       track.addEventListener('keydown', function (e) {
-        if (e.key === 'ArrowRight') { e.preventDefault(); stop(); go(cur + 1); }
-        if (e.key === 'ArrowLeft') { e.preventDefault(); stop(); go(cur - 1); }
+        if (e.key === 'ArrowRight') { e.preventDefault(); go(cur + 1); play(); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(cur - 1); play(); }
       });
-      ['pointerdown', 'focusin', 'mouseenter'].forEach(function (ev) { document.getElementById('carousel').addEventListener(ev, stop); });
+      var box = document.getElementById('carousel');
+      box.addEventListener('mouseenter', function () { hover = true; stop(); });
+      box.addEventListener('mouseleave', function () { hover = false; play(); });
+      /* Only keyboard focus pauses it; a mouse click on a dot leaves focus there and must not stop it for good */
+      box.addEventListener('focusin', function (e) { focus = !!(e.target.matches && e.target.matches(':focus-visible')); if (focus) stop(); });
+      box.addEventListener('focusout', function () { focus = false; play(); });
+      /* Pause control, so the movement can be stopped (also what reduced-motion viewers get: it still advances, but without the slide animation) */
+      pauseBtn.addEventListener('click', function () {
+        paused = !paused;
+        pauseBtn.textContent = paused ? '▶' : '❚❚';
+        pauseBtn.setAttribute('aria-label', paused ? 'Resume automatic scrolling' : 'Pause automatic scrolling');
+        play();
+      });
+      document.addEventListener('visibilitychange', play);
       sync();
-      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) timer = setInterval(function () { go(cur + 1); }, 5000);
+      play();
 
       /* Show the live star count when GitHub answers; otherwise leave it blank */
       fetch('https://api.github.com/repos/Manish-404/StreamRating')
