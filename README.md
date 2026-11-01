@@ -25,6 +25,12 @@ YouTube thumbnails, with the latest user review and a content advisory (sex/nudi
 - Ratings on YouTube movies: full movies, trailers and teasers, including dubbed films, get a rating badge in search
   results, the home feed, Movies & TV and the watch-page sidebar, and the scores sit under the title on the watch
   page. Hover a badge for the same card you get on Netflix. Videos that are not films get no badge.
+- One rating per film on YouTube: when a list shows the same film several times (the film itself, its trailers, its
+  teasers), only the first one carries the rating and the rest stay clean. In **Settings > YouTube**, the switch
+  **Show a film's rating on its first video only** turns this off, so every video of the film shows it. The switch
+  changes where ratings appear, not how many are fetched: a film's ratings are requested once and kept for a week
+  either way, so repeated videos of one film do not use extra OMDb requests. The free OMDb key's daily limit (1,000
+  requests at the time of writing) is used up by the number of different films on screen, not by how often one repeats.
 - Hover card with IMDb, Rotten Tomatoes, Metacritic and TMDB scores, the synopsis, cast and the latest user review
   (author, their score, date and an excerpt, with spoilers flagged and a link to read it in full).
   The card scrolls when it is taller than the window.
