@@ -10,6 +10,8 @@ import { createEpisodeInfo } from '../services/episodeInfo';
 import { createAdvisory, fetchPageText } from '../services/advisory';
 import { createReviews } from '../services/reviews';
 import { createSeasons } from '../services/seasons';
+import { armSoon, startSyncSchedule } from '../sync/schedule';
+import { runSync } from '../sync/service';
 
 export default defineBackground(() => {
   const lookup = createLookup({ tmdb, omdb });
@@ -30,5 +32,9 @@ export default defineBackground(() => {
   onMessage('getTitleState', ({ data }) => getTitleState(data));
   onMessage('setWatched', ({ data }) => setWatched(data.title, data.platform, data.watched));
   onMessage('setWatchlisted', ({ data }) => setWatchlisted(data.title, data.on));
+  onMessage('syncNow', () => runSync());
+  onMessage('syncSoon', () => armSoon());
   onMessage('openSettings', () => browser.runtime.openOptionsPage());
+
+  startSyncSchedule();
 });

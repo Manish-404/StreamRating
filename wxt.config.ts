@@ -31,6 +31,14 @@ export default defineConfig({
       'https://kids-in-mind.com/*',
       'https://www.googleapis.com/*',
     ],
+    // Chrome derives an unpacked extension's id from its folder, so loading it from another path gave an empty database
+    // and a different Google redirect URI. This public key pins the id to jejkigfhhhpmpnicgeipmhobpgejillf. If the add-on
+    // is ever published on the Chrome Web Store, the store assigns its own id: replace this with the store's key then.
+    ...(browser !== 'firefox'
+      ? {
+          key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoY3KkxMRk3VUHpi8udjDRhwwzpJzGigxHBsaxkimhBGPG5ZOyhBBYUgNDQMGPZxBq8o1pUzYhXhas6PjHsZlPPxo4Kr34bN0uRLFURzXCfyNbFmj/u/SYmHDw6PDyU6CV4lwWjT66q5T08WelliPXEGGwL+jOVvPhWoXR+WNIgTMPtyd3YKa+rRd+ba9wa3nRl2l5YS2HkivI/XlJRTu7RLEHgbmF7QVctlAaVNvVWyshoDRIeKdllV1UTDh+vvw7IurbRL03qTicehKGUPyTum0BteT8gQ8WMERyp9G1pjmk+hz6r24G8p8uy8b68PSi8Ts6JZOFQg6cwh54qPIBwIDAQAB',
+        }
+      : {}),
     ...(browser === 'firefox'
       ? {
           browser_specific_settings: {

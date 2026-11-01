@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks';
 import type { HistoryEntry, Platform } from '../../db/types';
 import { deleteHistoryEntry, listHistory } from '../../db/userData';
+import { syncSoon } from '../../sync/notify';
 import { useLive } from './useLive';
 
 export const PLATFORM_LABELS: Record<Platform, string> = {
@@ -77,7 +78,7 @@ export function HistoryTab() {
                   IMDb ↗
                 </a>
               )}
-              <button class="quiet" onClick={() => void deleteHistoryEntry(e.id)} aria-label={'Remove ' + e.title + ' from History'}>
+              <button class="quiet" onClick={() => void deleteHistoryEntry(e.id).then(syncSoon)} aria-label={'Remove ' + e.title + ' from History'}>
                 Remove
               </button>
             </li>

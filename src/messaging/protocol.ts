@@ -7,6 +7,7 @@ import type { AdvisoryQuery, AdvisoryResult } from '../services/advisory';
 import type { EpisodeResult } from '../services/episodeInfo';
 import type { ReviewResult } from '../services/reviews';
 import type { SeasonResult } from '../services/seasons';
+import type { SyncStatus } from '../sync/service';
 
 export interface KeyTestResult {
   ok: boolean;
@@ -41,6 +42,10 @@ interface ProtocolMap {
   setWatched(args: { title: TitleKey; platform: Platform; watched: boolean }): TitleState;
   /** The card's Watchlist button. */
   setWatchlisted(args: { title: TitleKey; on: boolean }): TitleState;
+  /** The Data tab's "Sync now": merges with Google Drive when it is connected. */
+  syncNow(): SyncStatus;
+  /** The dashboard changed the user's data: sync within a minute (and wake the background to do it). */
+  syncSoon(): void;
   /** Content scripts cannot open the options page themselves. */
   openSettings(): void;
 }

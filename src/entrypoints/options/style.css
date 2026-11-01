@@ -51,3 +51,7 @@ select { padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; ba
 .small { font-size: 0.85rem; }
 .quiet { background: none; border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; color: var(--muted); font: inherit; font-size: 0.85rem; cursor: pointer; }
 .quiet:hover { color: var(--bad); border-color: var(--bad); }
+
+.steps { padding-left: 1.3em; }
+.steps li { margin: 8px 0; }
+code.copy { display: inline-block; margin-top: 4px; padding: 3px 6px; border: 1px solid var(--line); border-radius: 4px; user-select: all; word-break: break-all; }

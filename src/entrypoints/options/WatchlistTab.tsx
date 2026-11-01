@@ -1,4 +1,5 @@
 import { listWatchlist, removeFromWatchlist } from '../../db/userData';
+import { syncSoon } from '../../sync/notify';
 import { formatDay } from './HistoryTab';
 import { useLive } from './useLive';
 
@@ -28,7 +29,7 @@ export function WatchlistTab() {
                   IMDb ↗
                 </a>
               )}
-              <button class="quiet" onClick={() => void removeFromWatchlist(e.id)} aria-label={'Remove ' + e.title + ' from the watchlist'}>
+              <button class="quiet" onClick={() => void removeFromWatchlist(e.id).then(syncSoon)} aria-label={'Remove ' + e.title + ' from the watchlist'}>
                 Remove
               </button>
             </li>
