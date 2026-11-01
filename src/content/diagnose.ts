@@ -168,3 +168,17 @@ export function describeEpisodes(): Record<string, unknown> {
   }
   return { images, dataUia: [...names], seasonTexts };
 }
+
+/** When the player page cannot be read: the videos on it and the markup of the title line, to fix the selectors from one pasted line. */
+export function describePlayer(): Record<string, unknown> {
+  const videos = Array.from(document.querySelectorAll('video')).map((v) => ({
+    size: size(v),
+    duration: Number.isFinite(v.duration) ? Math.round(v.duration) : null,
+    paused: v.paused,
+    readyState: v.readyState,
+  }));
+  const lines = Array.from(document.querySelectorAll('[data-uia*="title" i], [class*="video-title" i], [class*="PlayerControls" i] h4'))
+    .slice(0, 3)
+    .map((el) => el.outerHTML.slice(0, 300));
+  return { videos, titleLines: lines };
+}

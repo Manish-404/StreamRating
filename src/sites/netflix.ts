@@ -1,6 +1,7 @@
 import { isRenderable } from '../content/diagnose';
 import type { MatchQuery } from '../match/types';
 import { findNetflixEpisodes } from './netflixEpisodes';
+import { netflixPlayer } from './netflixPlayer';
 import type { SiteAdapter } from './types';
 
 // Netflix ids appear as /watch/<id>, /title/<id>, or (current browse pages) /browse?jbv=<id>.
@@ -289,5 +290,6 @@ export const netflix: SiteAdapter = {
     frame: { find: findBillboardFrame, hostStyle: 'position: absolute; left: 4%; top: 84px; z-index: 2147483000;' },
   },
   episodes: { find: findNetflixEpisodes },
+  player: netflixPlayer,
   anchor: (card) => card.querySelector<HTMLElement>('.boxart-container') ?? card,
 };

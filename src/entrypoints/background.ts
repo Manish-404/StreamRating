@@ -3,6 +3,7 @@ import { defineBackground } from 'wxt/utils/define-background';
 import { omdb, omdbQuota, tmdb } from '../api';
 import { fetchPosterDataUrl } from '../api/poster';
 import { testKeys } from '../api/testKeys';
+import { getTitleState, recordPlayed, setWatched, setWatchlisted } from '../db/userData';
 import { onMessage } from '../messaging/protocol';
 import { createLookup } from '../services/lookup';
 import { createEpisodeInfo } from '../services/episodeInfo';
@@ -25,5 +26,9 @@ export default defineBackground(() => {
   onMessage('getLatestReview', ({ data }) => getLatestReview(data.type, data.tmdbId));
   onMessage('getEpisode', ({ data }) => getEpisode(data.tmdbId, data.season, data.episode));
   onMessage('getAdvisory', ({ data }) => getAdvisory(data));
+  onMessage('recordPlayed', async ({ data }) => void (await recordPlayed(data)));
+  onMessage('getTitleState', ({ data }) => getTitleState(data));
+  onMessage('setWatched', ({ data }) => setWatched(data.title, data.platform, data.watched));
+  onMessage('setWatchlisted', ({ data }) => setWatchlisted(data.title, data.on));
   onMessage('openSettings', () => browser.runtime.openOptionsPage());
 });

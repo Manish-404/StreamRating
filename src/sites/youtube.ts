@@ -94,6 +94,8 @@ function soldFilm(title: string, year: number | undefined): MatchQuery {
   return { title: named?.[1] ?? title, ...(y !== undefined ? { year: y } : {}), type: 'movie', platform: 'youtube' };
 }
 
+const thumbnailOf = (card: HTMLElement) => card.querySelector<HTMLElement>(THUMBNAIL) ?? card;
+
 /**
  * The length on the thumbnail's time badge, in seconds. Undefined when there is none: a live stream, a premiere, or a
  * badge YouTube has not painted yet. Only the thumbnail is read, not the tile: a search result also lists chapter times.
@@ -127,13 +129,17 @@ function extract(card: HTMLElement): MatchQuery | null {
   return query && { ...query, platformId, ...(isTrailer(card, title) ? { trailer: true } : {}) };
 }
 
-const thumbnailOf = (card: HTMLElement) => card.querySelector<HTMLElement>(THUMBNAIL) ?? card;
-
 /**
  * The watch page: the chips go on their own line under the video's title, clear of the player. The title is read
  * only once YouTube has swapped it in for the address's video (it keeps the old one for a moment after a click).
  */
 function findDetail(doc: Document, known: Map<string, MatchQuery>): { query: MatchQuery; anchor: HTMLElement } | null {
+  const page = readWatchPage(doc, known);
+  return page && { query: page.query, anchor: page.anchor };
+}
+
+/** The video on the watch page and its title's query, or null while YouTube still shows the previous video or the video is not about a film. */
+function readWatchPage(doc: Document, known: Map<string, MatchQuery>): { id: string; query: MatchQuery; anchor: HTMLElement } | null {
   const url = new URL(doc.location.href);
   if (url.pathname !== '/watch') return null;
   const id = url.searchParams.get('v');
@@ -157,7 +163,7 @@ function findDetail(doc: Document, known: Map<string, MatchQuery>): { query: Mat
     }
   }
   if (!query) return null;
-  return { query: { ...query, platformId: id }, anchor: h1.parentElement };
+  return { id, query: { ...query, platformId: id }, anchor: h1.parentElement };
 }
 
 export const youtube: SiteAdapter = {
@@ -171,4 +177,14 @@ export const youtube: SiteAdapter = {
   // A search result is a whole row; only the picture should open the card.
   hoverTarget: thumbnailOf,
   detail: { find: findDetail, hostStyle: 'display: flex; align-items: center; margin: 8px 0 2px;' },
+  player: {
+    isPlayerPage: (url) => url.pathname === '/watch',
+    nowPlaying(doc, known) {
+      const page = readWatchPage(doc, known);
+      return page && { id: page.id, query: page.query };
+    },
+    // Adverts play in the same <video> as the video, and YouTube marks the player while one is on.
+    adPlaying: (doc) => !!doc.querySelector('.html5-video-player.ad-showing, .html5-video-player.ad-interrupting'),
+    trailerMaxSeconds: FILM_MIN_SECONDS,
+  },
 };

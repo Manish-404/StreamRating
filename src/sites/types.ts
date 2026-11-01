@@ -1,13 +1,16 @@
-import type { MediaType, Platform } from '../db/types';
+import type { Platform } from '../db/types';
 import type { MatchQuery } from '../match/types';
 import type { SiteId } from '../settings';
 
+/** What the player page is playing right now. */
 export interface NowPlaying {
-  title: string;
-  type?: MediaType;
+  /** The site's id for it, so the watcher notices when the video changes. */
+  id: string;
+  /** What to look up to find the title. */
+  query: MatchQuery;
+  /** Set for an episode of a series. */
   season?: number;
   episode?: number;
-  platformId?: string;
 }
 
 /**
@@ -61,8 +64,18 @@ export interface SiteAdapter {
   episodes?: {
     find(doc: Document): { season: number; rows: { episode: number; row: HTMLElement }[] } | null;
   };
+  /**
+   * The video player page, for the watch history. Nothing here may change the page: it only reads what is playing.
+   */
   player?: {
     isPlayerPage(url: URL): boolean;
-    nowPlaying(doc: Document): NowPlaying | null;
+    /** What is playing, or null while the player has not said (Netflix hides the title until the controls show). */
+    nowPlaying(doc: Document, known: Map<string, MatchQuery>): NowPlaying | null;
+    /** True when every video on this player is named by the page, so not finding the name means the markup changed (Netflix). */
+    reportUnreadable?: boolean;
+    /** True while an advert is playing in the player: it must not count as watching. */
+    adPlaying?(doc: Document): boolean;
+    /** A video this short or shorter is a trailer, not the title (YouTube); absent when the site has no trailers in its player. */
+    trailerMaxSeconds?: number;
   };
 }

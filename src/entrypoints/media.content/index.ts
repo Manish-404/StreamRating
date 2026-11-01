@@ -2,6 +2,7 @@ import { defineContentScript } from 'wxt/utils/define-content-script';
 import { createBadges } from '../../content/badges';
 import { createBillboard, createDetail } from '../../content/detail';
 import { describeBadge, describeMoreLikeThis, describeVisibleThumbnails, isRenderable } from '../../content/diagnose';
+import { startPlayerWatcher } from '../../content/playerWatcher';
 import { startScanner } from '../../content/scanner';
 import { getSettings, watchSettings } from '../../settings';
 import { adapterFor } from '../../sites';
@@ -29,6 +30,9 @@ export default defineContentScript({
       updateDetail();
       updateBillboard();
     });
+
+    // What is played on the player page goes into the History.
+    startPlayerWatcher(adapter);
 
     // If nothing shows up, this is the first thing to look at (DevTools console, filter "StreamRating").
     // Sites are single-page apps, so check again after every address change, not just at load.
