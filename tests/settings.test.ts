@@ -21,6 +21,19 @@ describe('settings', () => {
     expect(s.sites.netflix).toBe(true);
   });
 
+  it('shows a film\'s rating once by default, and keeps the choice when it is changed', async () => {
+    expect((await getSettings()).ratingOncePerFilm).toBe(true);
+    await saveSettings({ ratingOncePerFilm: false });
+    expect((await getSettings()).ratingOncePerFilm).toBe(false);
+    expect((await getSettings()).region).toBe('IN');
+  });
+
+  it('turns it on for someone whose saved settings predate it', async () => {
+    const { ratingOncePerFilm: _omit, ...older } = DEFAULT_SETTINGS;
+    await fakeBrowser.storage.local.set({ settings: older });
+    expect((await getSettings()).ratingOncePerFilm).toBe(true);
+  });
+
   it('fills in site toggles that an older saved version did not have', async () => {
     await fakeBrowser.storage.local.set({ settings: { ...DEFAULT_SETTINGS, sites: { netflix: false } } });
     const s = await getSettings();

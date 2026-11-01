@@ -111,6 +111,29 @@ export function SettingsTab() {
         ))}
       </div>
 
+      <h2>YouTube</h2>
+      <label class="check">
+        <input
+          type="checkbox"
+          role="switch"
+          checked={form.ratingOncePerFilm}
+          onChange={(e) => {
+            // A switch, not a field: it applies at once, without the keys needing to be tested.
+            const ratingOncePerFilm = e.currentTarget.checked;
+            set('ratingOncePerFilm', ratingOncePerFilm);
+            void saveSettings({ ratingOncePerFilm });
+          }}
+        />
+        Show a film's rating on its first video only
+      </label>
+      <p class="muted">
+        YouTube often lists the same film several times: the film itself, its trailers and its teasers. On (the default):
+        only the first of them in a list carries the rating, and the others stay clean. Off: every one of them carries it.
+        This changes where ratings appear, not how many are fetched. A film's ratings are requested once and kept for a
+        week either way, so repeated videos of one film do not cost extra OMDb requests. What uses the daily OMDb
+        allowance is the number of different films on screen.
+      </p>
+
       <p>
         <button class="primary" disabled={busy} onClick={saveAndTest}>
           {busy ? 'Testing...' : 'Save and test keys'}

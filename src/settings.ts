@@ -10,6 +10,11 @@ export interface Settings {
   /** ISO 3166-1 country code used for "where to stream". */
   region: string;
   sites: Record<SiteId, boolean>;
+  /**
+   * YouTube lists one film many times (the film, its trailers, its teasers). On: only the first of them on a page
+   * shows the rating. Off: every one does. It changes where badges appear, not how many ratings are fetched.
+   */
+  ratingOncePerFilm: boolean;
   torrentDomains: string[];
   googleClientId: string;
 }
@@ -19,6 +24,7 @@ export const DEFAULT_SETTINGS: Settings = {
   omdbKey: '',
   region: 'IN',
   sites: { netflix: true, hotstar: true, zee5: true, youtube: true, stremio: true, torrent: true },
+  ratingOncePerFilm: true,
   torrentDomains: [],
   googleClientId: '',
 };
