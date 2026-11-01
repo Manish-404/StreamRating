@@ -85,6 +85,17 @@ describe('lookup', () => {
     expect(d.omdb.getByImdbId).toHaveBeenCalledTimes(1);
   });
 
+  it('asks OMDb once for a film however many differently worded videos name it, even at the same moment', async () => {
+    const d = deps();
+    const lookup = createLookup(d);
+    await Promise.all([
+      lookup({ title: 'Dark' }),
+      lookup({ title: 'Dark', year: 2017, type: 'tv' }),
+      lookup({ title: 'Dark', alternatives: ['Dark Season'], platform: 'youtube', platformId: 'abcdefghijk' }),
+    ]);
+    expect(d.omdb.getByImdbId).toHaveBeenCalledTimes(1);
+  });
+
   it('uses the exact IMDb id when the page has one', async () => {
     const d = deps();
     await createLookup(d)({ title: 'whatever', imdbId: 'tt5753856' });
