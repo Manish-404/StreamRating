@@ -1,4 +1,5 @@
 import { h, render } from 'preact';
+import type { Platform } from '../db/types';
 import { matchKey } from '../match/key';
 import type { MatchQuery, TitleInfo } from '../match/types';
 import { sendMessage } from '../messaging/protocol';
@@ -29,14 +30,14 @@ interface Hooks {
  * Shows the ratings for one title as part of the page (not floating), next to an element the adapter picks, so
  * it cannot cover the artwork, the text or the video. Call the returned function whenever the page may have changed.
  */
-function createPlacement(tag: string, place: Place | undefined, hooks: Hooks) {
+function createPlacement(tag: string, place: Place | undefined, hooks: Hooks, platform?: Platform) {
   let host: HTMLElement | null = null;
   let mount: HTMLElement | null = null;
   let key = '';
   let info: TitleInfo | null = null;
 
   const paint = (state: BadgeState) =>
-    mount && render(h('div', { class: 'detail' }, h(Badge, { state, onEnter: (_el, info, at) => host && scheduleOpen(host, info, at), onLeave: scheduleClose, onSetup: () => void sendMessage('openSettings').catch(() => {}) })), mount);
+    mount && render(h('div', { class: 'detail' }, h(Badge, { state, onEnter: (_el, info, at) => host && scheduleOpen(host, info, at, platform), onLeave: scheduleClose, onSetup: () => void sendMessage('openSettings').catch(() => {}) })), mount);
 
   function ensureHost(): HTMLElement {
     if (host) return host;
@@ -118,7 +119,7 @@ export function createDetail(adapter: SiteAdapter) {
         console.info('[StreamRating] detail screen open but ratings could not be placed. ' + JSON.stringify(describeDetail()));
       }
     },
-  });
+  }, adapter.platform);
 }
 
 /** How long a page that should have a billboard may go without one before it is reported. */
@@ -146,7 +147,7 @@ export function createBillboard(adapter: SiteAdapter) {
       reportedFor = location.href;
       console.info('[StreamRating] billboard not recognised. ' + JSON.stringify(describeBillboard()));
     },
-  });
+  }, adapter.platform);
   // Once per title: where the ratings went and what is drawn on top of them, to tell "not placed" from "covered".
   let reportedPlaced = '';
   const reportPlaced = () => {
@@ -163,7 +164,7 @@ export function createBillboard(adapter: SiteAdapter) {
     );
   };
   // The same rating again on the billboard itself, in its corner.
-  const onIt = createPlacement('streamrating-billboard-badge', adapter.billboard?.frame, {});
+  const onIt = createPlacement('streamrating-billboard-badge', adapter.billboard?.frame, {}, adapter.platform);
   return () => {
     beside();
     onIt();

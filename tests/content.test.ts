@@ -1,6 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { h, render } from 'preact';
+import { act } from 'preact/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { TitleState } from '../src/db/userData';
 import type { LookupResult, TitleInfo } from '../src/match/types';
 
 const sendMessage = vi.fn();
@@ -8,7 +10,7 @@ vi.mock('../src/messaging/protocol', () => ({ sendMessage: (...a: unknown[]) => 
 
 const { createBadges } = await import('../src/content/badges');
 const { Badge } = await import('../src/content/Badge');
-const { HoverCard } = await import('../src/content/HoverCard');
+const { CardActions, HoverCard } = await import('../src/content/HoverCard');
 const { netflix } = await import('../src/sites/netflix');
 
 const info = (o: Partial<TitleInfo> = {}): TitleInfo => ({
@@ -136,5 +138,73 @@ describe('HoverCard', () => {
     expect(draw(info({ ratingsStatus: 'missing_key', imdbRating: null, rtCritics: null }))).toContain('Add an OMDb key');
     expect(draw(info({ ratingsStatus: 'quota' }))).toContain('daily limit');
     expect(draw(info({ confidence: 0.6 }))).toContain('Not sure this is the right title');
+  });
+});
+
+describe('the card buttons', () => {
+  const NO: TitleState = { watchlisted: false, watched: 'no', episodes: 0 };
+
+  /** Draws the buttons with the background answering `states` in turn; returns the two buttons. */
+  const draw = async (first: TitleState, platform: 'netflix' | 'youtube' = 'netflix') => {
+    sendMessage.mockImplementation(async (type: string) => (type === 'getTitleState' ? first : null));
+    const el = document.createElement('div');
+    document.body.append(el);
+    await act(() => render(h(CardActions, { info: info(), platform }), el));
+    await act(async () => void (await flush()));
+    const [watched, watchlist] = Array.from(el.querySelectorAll('button'));
+    return { watched: watched!, watchlist: watchlist!, text: (b: Element) => b.textContent?.trim() };
+  };
+
+  it('asks the background about the title when the card opens, and waits for the answer', async () => {
+    sendMessage.mockImplementation(() => new Promise(() => {}));
+    const el = document.createElement('div');
+    await act(() => render(h(CardActions, { info: info(), platform: 'netflix' }), el));
+    const buttons = Array.from(el.querySelectorAll('button'));
+    expect(buttons.every((b) => b.disabled)).toBe(true);
+    expect(sendMessage).toHaveBeenCalledWith('getTitleState', { imdbId: 'tt5753856', tmdbId: 1, type: 'tv', title: 'Dark', year: 2017 });
+  });
+
+  it('shows what is already saved', async () => {
+    const b = await draw({ watchlisted: true, watched: 'yes', episodes: 0 });
+    expect(b.text(b.watched)).toBe('✓ Watched');
+    expect(b.text(b.watchlist)).toBe('✓ On watchlist');
+    expect(b.watched.getAttribute('aria-pressed')).toBe('true');
+  });
+
+  it('Mark watched sends the site it was pressed on', async () => {
+    const b = await draw(NO, 'youtube');
+    expect(b.text(b.watched)).toBe('Mark watched');
+    sendMessage.mockImplementation(async () => ({ watchlisted: false, watched: 'yes', episodes: 0 }));
+    await act(() => b.watched.click());
+    await act(async () => void (await flush()));
+    expect(sendMessage).toHaveBeenCalledWith('setWatched', { title: expect.objectContaining({ tmdbId: 1 }), platform: 'youtube', watched: true });
+    expect(b.text(b.watched)).toBe('✓ Watched');
+  });
+
+  it('+ Watchlist saves, and a second press removes', async () => {
+    const b = await draw(NO);
+    expect(b.text(b.watchlist)).toBe('+ Watchlist');
+    sendMessage.mockImplementation(async () => ({ ...NO, watchlisted: true }));
+    await act(() => b.watchlist.click());
+    await act(async () => void (await flush()));
+    expect(sendMessage).toHaveBeenCalledWith('setWatchlisted', { title: expect.objectContaining({ tmdbId: 1 }), on: true });
+    expect(b.text(b.watchlist)).toBe('✓ On watchlist');
+    sendMessage.mockImplementation(async () => NO);
+    await act(() => b.watchlist.click());
+    await act(async () => void (await flush()));
+    expect(sendMessage).toHaveBeenLastCalledWith('setWatchlisted', { title: expect.objectContaining({ tmdbId: 1 }), on: false });
+  });
+
+  it('shows played episodes but will not wipe them with a click', async () => {
+    const b = await draw({ watchlisted: false, watched: 'episodes', episodes: 3 });
+    expect(b.text(b.watched)).toBe('✓ Watched · 3 episodes');
+    expect(b.watched.disabled).toBe(true);
+  });
+
+  it('is part of the hover card', () => {
+    sendMessage.mockResolvedValue(null);
+    const el = document.createElement('div');
+    render(h(HoverCard, { info: info(), platform: 'netflix' }), el);
+    expect(el.querySelector('.actions')).not.toBeNull();
   });
 });

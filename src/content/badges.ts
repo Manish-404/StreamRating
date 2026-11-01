@@ -44,7 +44,7 @@ export function createBadges(adapter: SiteAdapter, { oncePerFilm = () => true }:
     render(
       h(Badge, {
         state: e.hidden ? { status: 'none' } : e.state,
-        onEnter: (_el: HTMLElement, info: TitleInfo, at) => scheduleOpen(hoverTarget(e.card), info, at),
+        onEnter: (_el: HTMLElement, info: TitleInfo, at) => scheduleOpen(hoverTarget(e.card), info, at, adapter.platform),
         onLeave: scheduleClose,
         onSetup: () => void sendMessage('openSettings').catch(() => {}),
       }),
@@ -123,7 +123,7 @@ export function createBadges(adapter: SiteAdapter, { oncePerFilm = () => true }:
     target.addEventListener('mouseenter', (e) => {
       const entry = entries.get(card);
       const state = entry?.state;
-      if (state?.status === 'ready' && !entry?.hidden) scheduleOpen(target, state.info, { x: e.clientX, y: e.clientY });
+      if (state?.status === 'ready' && !entry?.hidden) scheduleOpen(target, state.info, { x: e.clientX, y: e.clientY }, adapter.platform);
     });
     target.addEventListener('mouseleave', scheduleClose);
   }

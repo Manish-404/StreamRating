@@ -38,6 +38,13 @@ h3 { margin: 0 0 2px; font-size: 16px; line-height: 1.25; font-weight: 700; }
 .people { margin: 8px 0 0; color: #c9cbd3; }
 .people b { color: #a3a6b0; font-weight: 600; margin-right: 4px; }
 .note { margin: 10px 0 0; padding: 7px 9px; border-radius: 6px; background: #26232f; color: #d9cfff; font-size: 12px; }
+/* Watched / Watchlist: two toggles under the title block. */
+.actions { display: flex; gap: 6px; margin-top: 10px; }
+.act { flex: 1; padding: 6px 8px; border-radius: 6px; border: 1px solid #3a3d48; background: #20222a; color: #d9dbe3; font: 600 12px/1.2 system-ui, -apple-system, "Segoe UI", sans-serif; cursor: pointer; transition: background-color 0.15s, border-color 0.15s, color 0.15s; }
+.act:hover:not(:disabled) { background: #2b2e39; border-color: #565a6a; color: #fff; }
+.act:active:not(:disabled) { background: #343846; }
+.act.on { background: rgba(143, 123, 255, 0.18); border-color: #8f7bff; color: #d6ceff; }
+.act:disabled { opacity: 0.55; cursor: default; }
 /* The card's own button-like link: a clear hover, press and keyboard focus. */
 .link { display: inline-flex; align-items: center; gap: 4px; margin-top: 10px; padding: 6px 10px; border-radius: 6px; color: #c4b9ff; background: rgba(143, 123, 255, 0.12); text-decoration: none; font-weight: 600; transition: background-color 0.15s, color 0.15s; }
 .link:hover { background: rgba(143, 123, 255, 0.24); color: #fff; }
@@ -98,5 +105,5 @@ a:focus-visible, button:focus-visible { outline: 2px solid #a99bff; outline-offs
 @media (prefers-reduced-motion: reduce) {
   .spinner { animation-duration: 2.4s; }
   .poster.pending { animation: none; }
-  .chip, .link, .review-foot a { transition: none; }
+  .chip, .link, .review-foot a, .act { transition: none; }
 }

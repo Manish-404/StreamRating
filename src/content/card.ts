@@ -2,6 +2,7 @@ import { h, render, type VNode } from 'preact';
 
 // Any card content: a title, an episode.
 type View = VNode<any>;
+import type { Platform } from '../db/types';
 import type { TitleInfo } from '../match/types';
 import { HoverCard } from './HoverCard';
 import css from './ui.css?inline';
@@ -145,8 +146,8 @@ export function scheduleOpenView(anchor: HTMLElement, key: string, node: View, a
 }
 
 /** Call when the pointer enters a thumbnail. The card opens after a short delay if the pointer is still around. */
-export function scheduleOpen(anchor: HTMLElement, info: TitleInfo, at?: { x: number; y: number }): void {
-  scheduleOpenView(anchor, 'title:' + info.key, h(HoverCard, { info }), at);
+export function scheduleOpen(anchor: HTMLElement, info: TitleInfo, at?: { x: number; y: number }, platform?: Platform): void {
+  scheduleOpenView(anchor, 'title:' + info.key, h(HoverCard, { info, platform }), at);
 }
 
 /** Call when the pointer leaves a thumbnail. Does nothing by itself: a preview covering it also ends a hover. */

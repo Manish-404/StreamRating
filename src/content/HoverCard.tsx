@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
-import type { MediaType } from '../db/types';
+import type { MediaType, Platform } from '../db/types';
+import type { TitleKey, TitleState } from '../db/userData';
 import { MATCH_THRESHOLD } from '../match/constants';
 import type { RatingsStatus, TitleInfo } from '../match/types';
 import { sendMessage } from '../messaging/protocol';
@@ -156,13 +157,65 @@ export function useAdvisory(info: TitleInfo): AdvisoryResult | 'loading' {
   return result;
 }
 
+const keyOf = (info: TitleInfo): TitleKey => ({
+  imdbId: info.imdbId,
+  tmdbId: info.tmdbId,
+  type: info.type,
+  title: info.title,
+  ...(info.year !== undefined ? { year: info.year } : {}),
+});
+
+/** "Watched" and "Watchlist": the card's two buttons. They save in the extension, so the lists are the same on every site. */
+export function CardActions({ info, platform = 'manual' }: { info: TitleInfo; platform?: Platform }) {
+  const [state, setState] = useState<TitleState | null>(null);
+  useEffect(() => {
+    setState(null);
+    let live = true;
+    sendMessage('getTitleState', keyOf(info))
+      .then((s) => live && setState(s))
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, [info.tmdbId, info.type]);
+
+  const run = (send: Promise<TitleState>) => send.then(setState).catch(() => {});
+  const watched = state?.watched ?? 'no';
+  // Episodes that were played are removed in History: one click here must not wipe a whole series.
+  const locked = watched === 'episodes';
+  return (
+    <div class="actions">
+      <button
+        class={'act' + (watched !== 'no' ? ' on' : '')}
+        disabled={!state || locked}
+        aria-pressed={watched !== 'no'}
+        title={locked ? 'Played episodes are listed, and can be removed, in the History tab of the StreamRating settings.' : watched === 'yes' ? 'Remove from History' : 'Add to History as watched'}
+        onClick={() => state && run(sendMessage('setWatched', { title: keyOf(info), platform, watched: watched === 'no' }))}
+      >
+        {watched === 'episodes' ? '✓ Watched · ' + state!.episodes + (state!.episodes === 1 ? ' episode' : ' episodes') : watched === 'yes' ? '✓ Watched' : 'Mark watched'}
+      </button>
+      <button
+        class={'act' + (state?.watchlisted ? ' on' : '')}
+        disabled={!state}
+        aria-pressed={!!state?.watchlisted}
+        title={state?.watchlisted ? 'Remove from the watchlist' : 'Save to the watchlist'}
+        onClick={() => state && run(sendMessage('setWatchlisted', { title: keyOf(info), on: !state.watchlisted }))}
+      >
+        {state?.watchlisted ? '✓ On watchlist' : '+ Watchlist'}
+      </button>
+    </div>
+  );
+}
+
 export interface HoverCardProps {
   info: TitleInfo;
+  /** The site the card opened on, for the History entry the Watched button adds. */
+  platform?: Platform;
   onEnter?: () => void;
   onLeave?: () => void;
 }
 
-export function HoverCard({ info, onEnter, onLeave }: HoverCardProps) {
+export function HoverCard({ info, platform, onEnter, onLeave }: HoverCardProps) {
   const [poster, setPoster] = useState<string | null>(null);
   const review = useLatestReview(info.type, info.tmdbId);
   const advisory = useAdvisory(info);
@@ -202,6 +255,7 @@ export function HoverCard({ info, onEnter, onLeave }: HoverCardProps) {
           </div>
         </div>
       </div>
+      <CardActions info={info} platform={platform} />
       {info.tagline && <p class="tagline">{info.tagline}</p>}
       {info.overview && <p class="overview">{info.overview}</p>}
       {info.directors.length > 0 && <p class="people"><b>{people}</b> {info.directors.slice(0, 2).join(', ')}</p>}
