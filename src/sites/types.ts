@@ -25,6 +25,11 @@ export interface SiteAdapter {
   extract(card: HTMLElement): MatchQuery | null;
   /** The element to put the badge in. */
   anchor(card: HTMLElement): HTMLElement;
+  /**
+   * True when one title fills many thumbnails (YouTube: the film, its trailers, its teasers), so the "once per film"
+   * setting applies: only the first thumbnail of a title on the page keeps its badge.
+   */
+  repeats?: boolean;
   /** The element whose hover opens the card, and that the card sits beside. The whole thumbnail card when absent. */
   hoverTarget?(card: HTMLElement): HTMLElement;
   /**

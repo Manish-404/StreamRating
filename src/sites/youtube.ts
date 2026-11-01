@@ -167,6 +167,7 @@ export const youtube: SiteAdapter = {
   findCards,
   extract,
   anchor: thumbnailOf,
+  repeats: true,
   // A search result is a whole row; only the picture should open the card.
   hoverTarget: thumbnailOf,
   detail: { find: findDetail, hostStyle: 'display: flex; align-items: center; margin: 8px 0 2px;' },

@@ -38,6 +38,16 @@ describe('badges on thumbnails', () => {
     expect(sendMessage).toHaveBeenCalledWith('lookupTitle', { title: 'Stranger Things', platform: 'netflix', platformId: '80057281' });
   });
 
+  it('keeps every badge on a site whose titles do not repeat, whatever "once per film" says', async () => {
+    sendMessage.mockResolvedValue({ status: 'ok', info: info() });
+    const visit = createBadges(netflix, { oncePerFilm: () => true });
+    visit(card(1));
+    visit(card(2));
+    await flush();
+    expect(badgeText(card(1))).toContain('IMDb 8.7');
+    expect(badgeText(card(2))).toContain('IMDb 8.7');
+  });
+
   it('asks only once for a card that is visited again', async () => {
     sendMessage.mockResolvedValue({ status: 'ok', info: info() });
     const visit = createBadges(netflix);

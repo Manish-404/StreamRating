@@ -3,7 +3,7 @@ import { createBadges } from '../../content/badges';
 import { createBillboard, createDetail } from '../../content/detail';
 import { describeBadge, describeMoreLikeThis, describeVisibleThumbnails, isRenderable } from '../../content/diagnose';
 import { startScanner } from '../../content/scanner';
-import { getSettings } from '../../settings';
+import { getSettings, watchSettings } from '../../settings';
 import { adapterFor } from '../../sites';
 
 export default defineContentScript({
@@ -14,12 +14,18 @@ export default defineContentScript({
   async main() {
     const adapter = adapterFor(new URL(location.href));
     if (!adapter) return;
+    const settings = await getSettings();
     // A site turned off in Settings takes effect on the next page load.
-    if (!(await getSettings()).sites[adapter.id]) return;
+    if (!settings.sites[adapter.id]) return;
     console.info('[StreamRating] content script started on ' + adapter.id + ', build ' + __BUILD_TIME__);
+    // "Once per film" is read on every scan, so flipping it in Settings changes the open page within a couple of seconds.
+    let oncePerFilm = settings.ratingOncePerFilm;
+    watchSettings((s) => {
+      oncePerFilm = s.ratingOncePerFilm;
+    });
     const updateDetail = createDetail(adapter);
     const updateBillboard = createBillboard(adapter);
-    startScanner(adapter, createBadges(adapter), () => {
+    startScanner(adapter, createBadges(adapter, { oncePerFilm: () => oncePerFilm }), () => {
       updateDetail();
       updateBillboard();
     });
