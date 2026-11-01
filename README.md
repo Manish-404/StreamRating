@@ -15,6 +15,12 @@ YouTube thumbnails, with the latest user review and a content advisory (sex/nudi
     <td><a href="docs/screenshots/content-advisory.webp"><img src="docs/screenshots/content-advisory.webp" alt="Hover card with a content advisory from Kids-In-Mind and IMDb"></a></td>
     <td><a href="docs/screenshots/settings.png"><img src="docs/screenshots/settings.png" alt="Settings tab"></a></td>
   </tr>
+  <tr>
+    <td><a href="docs/screenshots/youtube-search.webp"><img src="docs/screenshots/youtube-search.webp" alt="YouTube search results with an IMDb and Rotten Tomatoes badge on the Dune: Part Two trailer"></a></td>
+    <td><a href="docs/screenshots/youtube-hover-card.webp"><img src="docs/screenshots/youtube-hover-card.webp" alt="YouTube hover card for Oppenheimer with IMDb, Rotten Tomatoes, Metacritic and TMDB scores, a content advisory and the latest review"></a></td>
+    <td><a href="docs/screenshots/youtube-watch.webp"><img src="docs/screenshots/youtube-watch.webp" alt="A YouTube watch page with the IMDb and Rotten Tomatoes scores under the video title"></a></td>
+    <td><a href="docs/screenshots/youtube-movies-tv.webp"><img src="docs/screenshots/youtube-movies-tv.webp" alt="YouTube Movies &amp; TV with rating badges on the film posters"></a></td>
+  </tr>
 </table>
 
 ## Features

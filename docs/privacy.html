@@ -13,7 +13,7 @@
 </head>
 <body>
   <h1>StreamRating privacy policy</h1>
-  <p>Last updated: 1 November 2026</p>
+  <p>Last updated: 2 November 2026</p>
 
   <p>StreamRating is a browser extension that shows IMDb and Rotten Tomatoes ratings on streaming thumbnails. It has no account system and no server of its own. This page explains what data it handles.</p>
 
@@ -21,7 +21,7 @@
   <ul>
     <li>Your TMDB and OMDb API keys and your settings, kept in the browser's extension storage.</li>
     <li>A cache of ratings and title details, kept in the browser's IndexedDB so the same title is not looked up twice.</li>
-    <li>Your watch history and watchlist: the titles you played for a few minutes on Netflix or YouTube, and the ones you saved or marked as watched on a title's card. They are kept in the browser's IndexedDB, can be removed one by one in the extension's settings, and are never sent anywhere.</li>
+    <li>Your watch history and watchlist: the titles you played for a few minutes on Netflix or YouTube, and the ones you saved or marked as watched on a title's card. They are kept in the browser's IndexedDB, can be removed one by one in the extension's settings, and are not sent anywhere unless you turn on the optional Google Drive sync described below. You can also save them to a file with the Export backup button.</li>
   </ul>
   <p>This data is never sent to the developer or to any third party other than as described below. Removing the extension deletes it.</p>
 
@@ -39,6 +39,14 @@
   <p>These are ordinary page requests with no API key and no account; they reveal the title's name or IMDb id to those sites.</p>
   <p>These requests use your own API key, so they are tied to your key under those services' own terms and privacy policies. Because the titles you browse can reveal your viewing interests, Firefox shows this as "browsing activity" data collection.</p>
 
+  <h2>Optional: Google Drive sync</h2>
+  <p>If you choose to connect Google Drive in the extension's Data tab, the extension keeps one file, <code>streamrating-data.json</code>, in <em>your own</em> Google Drive. It contains your watch history, watchlist and corrections to title matches, and is used to merge them between your browsers and computers. It never contains your API keys or settings.</p>
+  <ul>
+    <li>It is off until you set it up with your own Google Cloud project and press Connect. Pressing Disconnect stops it and removes the saved sign-in from the browser.</li>
+    <li>The extension asks Google only for the <code>drive.file</code> permission, which lets it see just the files it created, nothing else in your Drive.</li>
+    <li>The file travels between your browser and Google (<code>www.googleapis.com</code>). It is not sent to the developer or to anyone else. Google's own terms and privacy policy apply to the copy in your Drive, and you can delete the file or revoke access from your Google account at any time.</li>
+  </ul>
+
   <h2>What is not collected</h2>
   <ul>
     <li>No analytics, tracking, advertising or telemetry.</li>
@@ -48,7 +56,7 @@
   </ul>
 
   <h2>Changes</h2>
-  <p>If a future version adds anything that moves data off your device, such as optional backup to your own cloud storage, it will be opt-in and this policy will be updated before it ships.</p>
+  <p>If a future version adds anything else that moves data off your device, it will be opt-in and this policy will be updated before it ships.</p>
 
   <h2>Contact</h2>
   <p>Questions or requests: open an issue at <a href="https://github.com/Manish-404/StreamRating/issues">github.com/Manish-404/StreamRating/issues</a>.</p>
