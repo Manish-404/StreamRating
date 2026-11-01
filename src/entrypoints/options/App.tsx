@@ -1,12 +1,15 @@
 import { useState } from 'preact/hooks';
+import { DataTab } from './DataTab';
+import { HistoryTab } from './HistoryTab';
 import { SettingsTab } from './SettingsTab';
+import { WatchlistTab } from './WatchlistTab';
 
 const TABS = [
-  { id: 'history', label: 'History', milestone: 5 },
-  { id: 'watchlist', label: 'Watchlist', milestone: 5 },
+  { id: 'history', label: 'History' },
+  { id: 'watchlist', label: 'Watchlist' },
   { id: 'foryou', label: 'For You', milestone: 7 },
   { id: 'settings', label: 'Settings' },
-  { id: 'data', label: 'Data', milestone: 6 },
+  { id: 'data', label: 'Data' },
 ] as const;
 
 type TabId = (typeof TABS)[number]['id'];
@@ -29,6 +32,12 @@ export function App() {
       </header>
       {tab === 'settings' ? (
         <SettingsTab />
+      ) : tab === 'history' ? (
+        <HistoryTab />
+      ) : tab === 'watchlist' ? (
+        <WatchlistTab />
+      ) : tab === 'data' ? (
+        <DataTab />
       ) : (
         <p class="muted">{current?.label} is not built yet. It arrives in milestone {current && 'milestone' in current ? current.milestone : '?'}.</p>
       )}
