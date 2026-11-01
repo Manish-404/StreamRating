@@ -14,7 +14,10 @@ export function App() {
 
   return (
     <main>
-      <h1>StreamRating</h1>
+      <div class="brand">
+        <img class="logo" src="/icon/32.png" alt="" width="24" height="24" />
+        <h1>StreamRating</h1>
+      </div>
       {counts && (
         <p>
           Watched: {counts.watched} {counts.watched === 1 ? 'title' : 'titles'} · Watchlist: {counts.watchlist}

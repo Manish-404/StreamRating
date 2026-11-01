@@ -21,7 +21,10 @@ export function App() {
   return (
     <main>
       <header>
-        <h1>StreamRating</h1>
+        <div class="brand">
+          <img class="logo" src="/icon/48.png" alt="" width="32" height="32" />
+          <h1>StreamRating</h1>
+        </div>
         <nav>
           {TABS.map((t) => (
             <button key={t.id} class={t.id === tab ? 'tab active' : 'tab'} onClick={() => setTab(t.id)}>
