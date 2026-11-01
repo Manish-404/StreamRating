@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { MatchQuery } from '../src/match/types';
 import { adapterFor } from '../src/sites';
-import { VIDEO_TITLE_MIN_CONFIDENCE, youtube } from '../src/sites/youtube';
+import { FILM_MIN_SECONDS, VIDEO_TITLE_MIN_CONFIDENCE, youtube } from '../src/sites/youtube';
 
 const el = (id: string) => document.getElementById(id)!;
 
@@ -18,7 +18,9 @@ describe('youtube tiles', () => {
   });
 
   it('finds each video tile once, the innermost one, and skips Shorts', () => {
-    expect(youtube.findCards(document).map((c) => c.id)).toEqual(['sold-search', 'upload', 'fan-edit', 'lockup-upload', 'sold-lockup', 'storefront']);
+    expect(youtube.findCards(document).map((c) => c.id)).toEqual([
+      'sold-search', 'upload', 'trailer', 'fan-edit', 'lockup-upload', 'lockup-trailer', 'sold-lockup', 'storefront',
+    ]);
   });
 
   it('takes a film sold on YouTube by its name, with the year from the tile', () => {
@@ -49,6 +51,45 @@ describe('youtube tiles', () => {
 
   it('gives no badge to a video that is not about a film', () => {
     expect(youtube.extract(el('fan-edit'))).toBeNull();
+  });
+
+  describe('trailer or film, by the length on the thumbnail', () => {
+    /** Puts a time badge with this text on the upload tile, replacing the one it has. */
+    const timed = (time: string | null, id = 'upload') => {
+      const span = el(id).querySelector('#text')!;
+      if (time === null) span.remove();
+      else span.textContent = time;
+      return youtube.extract(el(id));
+    };
+
+    it('takes an upload over 25 minutes for the film', () => {
+      expect(youtube.extract(el('upload'))?.trailer).toBeUndefined(); // 2:08:29
+      expect(youtube.extract(el('lockup-upload'))?.trailer).toBeUndefined(); // 2:20:44, in the newer lockup
+      expect(timed('25:01')?.trailer).toBeUndefined();
+    });
+
+    it('takes a shorter upload for a trailer, whatever its title says', () => {
+      expect(youtube.extract(el('trailer'))).toMatchObject({ title: 'Oppenheimer', trailer: true, platformId: 'bK6ldnjE3Y0' });
+      expect(youtube.extract(el('lockup-trailer'))).toMatchObject({ title: 'Oppenheimer', trailer: true, platformId: 'uYPbbksJxIg' });
+      expect(timed('3:00')?.trailer).toBe(true); // titled "Full Movie", but three minutes long
+    });
+
+    it('puts the line at exactly 25 minutes', () => {
+      expect(FILM_MIN_SECONDS).toBe(1500);
+      expect(timed('25:00')?.trailer).toBe(true);
+      expect(timed('25:01')?.trailer).toBeUndefined();
+    });
+
+    it('goes by the title when the tile shows no length, and ignores the chapter times in a search result', () => {
+      expect(timed(null)?.trailer).toBeUndefined(); // "Full Movie", and the "1:00" chapter is not its length
+      el('trailer').querySelector('#text')!.remove();
+      expect(youtube.extract(el('trailer'))?.trailer).toBe(true); // "Official Trailer"
+    });
+
+    it('never calls a film sold on YouTube a trailer', () => {
+      expect(youtube.extract(el('sold-search'))?.trailer).toBeUndefined();
+      expect(youtube.extract(el('sold-lockup'))?.trailer).toBeUndefined();
+    });
   });
 
   it('puts the badge on the picture, and only the picture opens the card', () => {

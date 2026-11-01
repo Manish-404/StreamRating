@@ -18,6 +18,8 @@ export interface MatchQuery {
   people?: string[];
   /** The year is when a video was uploaded, which for a dub is later than the film's release. A film made before it still fits. */
   yearIsUpload?: boolean;
+  /** A short upload (a trailer, a teaser), not the film: 25 minutes or less on YouTube. */
+  trailer?: boolean;
 }
 
 export type RatingsStatus = 'ok' | 'missing_key' | 'quota' | 'unavailable' | 'no_imdb_id';

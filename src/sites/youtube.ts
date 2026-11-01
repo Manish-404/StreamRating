@@ -36,6 +36,12 @@ const SOLD_HERE = /Buy or rent|Free with ads/i;
  */
 export const VIDEO_TITLE_MIN_CONFIDENCE = 0.8;
 
+/** An upload longer than this is taken for the film itself; a shorter one is a trailer, a teaser or a clip. */
+export const FILM_MIN_SECONDS = 25 * 60;
+/** The time on a thumbnail's badge: "3:02", "2:08:29". */
+const DURATION = /^(?:(\d{1,2}):)?(\d{1,2}):(\d{2})$/;
+const TRAILER_WORD = /\b(?:trailers?|teasers?)\b/i;
+
 const clean = (s: string | null | undefined) => (s ?? '').replace(/\s+/g, ' ').trim();
 
 function findCards(root: ParentNode): HTMLElement[] {
@@ -88,6 +94,27 @@ function soldFilm(title: string, year: number | undefined): MatchQuery {
   return { title: named?.[1] ?? title, ...(y !== undefined ? { year: y } : {}), type: 'movie', platform: 'youtube' };
 }
 
+/**
+ * The length on the thumbnail's time badge, in seconds. Undefined when there is none: a live stream, a premiere, or a
+ * badge YouTube has not painted yet. Only the thumbnail is read, not the tile: a search result also lists chapter times.
+ */
+function durationOf(card: HTMLElement): number | undefined {
+  const thumbnail = card.querySelector<HTMLElement>(THUMBNAIL);
+  if (!thumbnail) return undefined;
+  for (const el of thumbnail.querySelectorAll<HTMLElement>('*')) {
+    if (el.childElementCount > 0) continue;
+    const m = DURATION.exec(clean(el.textContent));
+    if (m) return Number(m[1] ?? 0) * 3600 + Number(m[2]) * 60 + Number(m[3]);
+  }
+  return undefined;
+}
+
+/** Over 25 minutes is the film; anything shorter is a trailer. With no time on the tile, the title's own words decide. */
+function isTrailer(card: HTMLElement, title: string): boolean {
+  const seconds = durationOf(card);
+  return seconds === undefined ? TRAILER_WORD.test(title) : seconds <= FILM_MIN_SECONDS;
+}
+
 function extract(card: HTMLElement): MatchQuery | null {
   const title = titleOf(card);
   if (!title) return null;
@@ -97,7 +124,7 @@ function extract(card: HTMLElement): MatchQuery | null {
     card.matches(MOVIE_TILE) || SOLD_HERE.test(text.replace(title, ' ')) || !!card.querySelector('[aria-label*="YouTube Movies"]');
   if (forSale) return { ...soldFilm(title, yearBesides(text, title)), platformId };
   const query = queryFromVideoTitle(title);
-  return query && { ...query, platformId };
+  return query && { ...query, platformId, ...(isTrailer(card, title) ? { trailer: true } : {}) };
 }
 
 const thumbnailOf = (card: HTMLElement) => card.querySelector<HTMLElement>(THUMBNAIL) ?? card;

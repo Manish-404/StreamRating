@@ -13,12 +13,27 @@
 
     <ytd-video-renderer id="upload">
       <div id="dismissible">
-        <ytd-thumbnail><a id="thumbnail" href="/watch?v=9Zgs4i7Kyrw&amp;pp=ygUW"><img src="t.jpg"></a></ytd-thumbnail>
+        <ytd-thumbnail>
+          <a id="thumbnail" href="/watch?v=9Zgs4i7Kyrw&amp;pp=ygUW"><img src="t.jpg">
+            <div id="overlays"><ytd-thumbnail-overlay-time-status-renderer><span id="text" aria-label="2 hours, 8 minutes, 29 seconds">
+              2:08:29
+            </span></ytd-thumbnail-overlay-time-status-renderer></div>
+          </a>
+        </ytd-thumbnail>
         <h3 class="title-and-badge"><a id="video-title" title="Oppenheimer (2023) | HD Full Movie | Universal Studios" href="/watch?v=9Zgs4i7Kyrw"><yt-formatted-string>Oppenheimer (2023) | HD Full Movie | Universal Studios</yt-formatted-string></a></h3>
         <ytd-horizontal-card-list-renderer>
-          <ytd-macro-markers-list-item-renderer><a id="endpoint" href="/watch?v=9Zgs4i7Kyrw&amp;t=60s"><img src="m.jpg"></a></ytd-macro-markers-list-item-renderer>
+          <ytd-macro-markers-list-item-renderer><a id="endpoint" href="/watch?v=9Zgs4i7Kyrw&amp;t=60s"><img src="m.jpg"></a><div id="time">1:00</div></ytd-macro-markers-list-item-renderer>
         </ytd-horizontal-card-list-renderer>
       </div>
+    </ytd-video-renderer>
+
+    <ytd-video-renderer id="trailer">
+      <ytd-thumbnail>
+        <a id="thumbnail" href="/watch?v=bK6ldnjE3Y0&amp;pp=ygUW"><img src="t.jpg">
+          <div id="overlays"><ytd-thumbnail-overlay-time-status-renderer><span id="text">3:02</span></ytd-thumbnail-overlay-time-status-renderer></div>
+        </a>
+      </ytd-thumbnail>
+      <h3><a id="video-title" title="Oppenheimer | Official Trailer | Universal Pictures" href="/watch?v=bK6ldnjE3Y0">Oppenheimer | Official Trailer | Universal Pictures</a></h3>
     </ytd-video-renderer>
 
     <ytd-video-renderer id="fan-edit">
@@ -31,12 +46,28 @@
 <ytd-rich-item-renderer id="home-item">
   <yt-lockup-view-model id="lockup-upload">
     <div class="ytLockupViewModelHost ytLockupViewModelVertical">
-      <a class="ytLockupViewModelContentImage" href="/watch?v=j903ASEDWxc"><yt-thumbnail-view-model><img src="t.jpg"></yt-thumbnail-view-model></a>
+      <a class="ytLockupViewModelContentImage" href="/watch?v=j903ASEDWxc"><yt-thumbnail-view-model><img src="t.jpg">
+        <yt-thumbnail-overlay-badge-view-model><yt-thumbnail-badge-view-model><badge-shape class="yt-badge-shape" aria-label="2 hours, 20 minutes, 44 seconds"><div class="yt-badge-shape__text">2:20:44</div></badge-shape></yt-thumbnail-badge-view-model></yt-thumbnail-overlay-badge-view-model>
+      </yt-thumbnail-view-model></a>
       <div class="ytSpecAvatarShapeHost" aria-label="Go to channel Zee Movies Hindi"></div>
       <h3 class="ytLockupMetadataViewModelHeadingReset" title="Uri: The Surgical Strike - Hindi Patriotic Full Movie - Vicky Kaushal, Yami Gautam, Paresh Rawal">
         <a class="ytLockupMetadataViewModelTitle" href="/watch?v=j903ASEDWxc">Uri: The Surgical Strike - Hindi Patriotic Full Movie - Vicky Kaushal, Yami Gaut</a>
       </h3>
       <span>Zee Movies Hindi 33M 2y ago</span>
+    </div>
+  </yt-lockup-view-model>
+</ytd-rich-item-renderer>
+
+<ytd-rich-item-renderer id="home-item-trailer">
+  <yt-lockup-view-model id="lockup-trailer">
+    <div class="ytLockupViewModelHost ytLockupViewModelVertical">
+      <a class="ytLockupViewModelContentImage" href="/watch?v=uYPbbksJxIg"><yt-thumbnail-view-model><img src="t.jpg">
+        <yt-thumbnail-overlay-badge-view-model><yt-thumbnail-badge-view-model><badge-shape class="yt-badge-shape" aria-label="2 minutes, 31 seconds"><div class="yt-badge-shape__text">2:31</div></badge-shape></yt-thumbnail-badge-view-model></yt-thumbnail-overlay-badge-view-model>
+      </yt-thumbnail-view-model></a>
+      <h3 class="ytLockupMetadataViewModelHeadingReset" title="Oppenheimer - Official Teaser Trailer (2023)">
+        <a class="ytLockupMetadataViewModelTitle" href="/watch?v=uYPbbksJxIg">Oppenheimer - Official Teaser Trailer (2023)</a>
+      </h3>
+      <span>Universal Pictures 20M 3y ago</span>
     </div>
   </yt-lockup-view-model>
 </ytd-rich-item-renderer>
